@@ -4,6 +4,14 @@ set.textwidth = 80 -- Wrap text at 80 characters
 set.spell = true -- Enable spell checking
 set.linebreak = true
 
+vim.b.slime_cell_delimiter = "```"
+
+-- wrap text, but by word no character
+-- indent the wrappped line
+vim.wo.wrap = true
+vim.wo.breakindent = true
+vim.wo.showbreak = "|"
+
 -- added extra highlights for markdown files to render highlights properly
 -- thx to Linkarzu
 

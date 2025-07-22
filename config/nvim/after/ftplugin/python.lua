@@ -1,4 +1,5 @@
 local set = vim.opt_local
+vim.b.slime_cell_delimiter = "#\\s\\=%%"
 
 set.tabstop = 4
 set.shiftwidth = 4

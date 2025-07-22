@@ -36,4 +36,18 @@ require("lazy").setup({
   change_detection = {
     notify = false,
   },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        "gzip",             -- rarely used for reading .gz files
+        "netrwPlugin",      -- disable if you use telescope, nvim-tree, neo-tree, etc.
+        "tarPlugin",        -- disables support for browsing .tar files
+        "tohtml",           -- convert buffer to HTML; probably never used
+        "tutor",            -- the Vim tutor
+        "zipPlugin",        -- like tarPlugin, but for zip files
+        "shada_plugin",     -- shada session plugin (if not using `shada` at all)
+        "spellfile_plugin", -- spellfile.vim; if you're not using spelling
+      },
+    },
+  }
 })

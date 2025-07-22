@@ -1,10 +1,10 @@
 return {
   "hrsh7th/nvim-cmp",
   event = "InsertEnter",
-  branch = "main",        -- fix for deprecated functions coming in nvim 0.13
+  branch = "main", -- fix for deprecated functions coming in nvim 0.13
   dependencies = {
     "hrsh7th/cmp-buffer", -- source for text in buffer
-    "hrsh7th/cmp-path",   -- source for file system paths
+    "hrsh7th/cmp-path", -- source for file system paths
     "hrsh7th/cmp-emoji",
     {
       "L3MON4D3/LuaSnip",
@@ -13,16 +13,16 @@ return {
       -- install jsregexp (optional!).
       build = "make install_jsregexp",
     },
-    "saadparwaiz1/cmp_luasnip",     -- autocompletion
+    "saadparwaiz1/cmp_luasnip", -- autocompletion
     "rafamadriz/friendly-snippets", -- snippets
     "nvim-treesitter/nvim-treesitter",
-    "onsails/lspkind.nvim",         -- vs-code pictograms
+    "onsails/lspkind.nvim", -- vs-code pictograms
     "roobert/tailwindcss-colorizer-cmp.nvim",
     "jmbuhr/otter.nvim",
     {
       "jc-doyle/cmp-pandoc-references",
       dev = false,
-      ft = { 'quarto', 'markdown', 'rmarkdown' },
+      ft = { "quarto", "markdown", "rmarkdown" },
     },
     "kdheepak/cmp-latex-symbols",
     "petertriho/cmp-git",
@@ -245,14 +245,14 @@ return {
       },
       -- autocompletion sources
       sources = cmp.config.sources({
-        -- { name = "otter", priority = 1000 },
-        { name = "copilot",                  priority = 1000 }, -- Copilot
-        { name = "nvim_lsp",                 priority = 900 },
-        { name = "luasnip",                  priority = 750 },  -- snippets
-        { name = "nvim_lua",                 priority = 700 },
-        { name = "lazydev",                  priority = 600 },
-        { name = "buffer",                   priority = 500 }, -- text within current buffer
-        { name = "path",                     priority = 250 }, -- file system paths
+        { name = "nvim_lsp", priority = 1000 },
+        { name = "copilot", priority = 900 }, -- Copilot
+        { name = "luasnip", priority = 800 }, -- snippets
+        { name = "otter", priority = 750 },
+        { name = "buffer", priority = 700 }, -- text within current buffer
+        { name = "nvim_lua", priority = 600 },
+        { name = "lazydev", priority = 550 },
+        { name = "path", priority = 400 }, -- file system paths
         { name = "tailwindcss-colorizer-cmp" },
         { name = "pandoc_references" },
         {
@@ -262,9 +262,8 @@ return {
           },
         },
         { name = "emoji" },
-        { name = "git" }
+        { name = "git" },
       }),
-
 
       -- NOTE: ! Experimenting with Customized Mappings ! --
       mapping = cmp.mapping.preset.insert({
@@ -371,6 +370,7 @@ return {
         end,
       },
     })
+
     require("cmp_git").setup()
   end,
 }

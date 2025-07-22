@@ -309,7 +309,8 @@ return {
       settings = {
         basedpyright = {
           analysis = {
-            diagnosticMode = "openFilesOnly",
+            -- diagnosticMode = "openFilesOnly",
+            diagnosticMode = "workspace",
             typeCheckingMode = "basic",
             capabilities = capabilities,
             useLibraryCodeForTypes = true,
@@ -325,5 +326,7 @@ return {
         },
       },
     })
+
+    vim.keymap.set("n", "<leader>k", vim.lsp.buf.hover, { desc = "LSP Hover" })
   end,
 }

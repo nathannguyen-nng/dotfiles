@@ -1,11 +1,11 @@
 
 
---color=bg+:#414559,spinner:#F2D5CF,hl:#E78284
+--color=bg+:#CCD0DA,spinner:#DC8A78,hl:#D20F39
 
---color=fg:#C6D0F5,header:#E78284,info:#CA9EE6,pointer:#F2D5CF
+--color=fg:#4C4F69,header:#D20F39,info:#8839EF,pointer:#DC8A78
 
---color=marker:#BABBF1,fg+:#C6D0F5,prompt:#CA9EE6,hl+:#E78284
+--color=marker:#7287FD,fg+:#4C4F69,prompt:#8839EF,hl+:#D20F39
 
---color=selected-bg:#51576D
+--color=selected-bg:#BCC0CC
 
---color=border:#414559,label:#C6D0F5
+--color=border:#CCD0DA,label:#4C4F69

@@ -47,6 +47,7 @@ return {
         "yamlls",
         "clangd",
         "sqlls",
+        "basedpyright"
         -- 'julia-lsp'
         -- 'rust-analyzer',
       },
@@ -57,8 +58,8 @@ return {
       run_on_start = false,
       ensure_installed = {
         "prettier", -- prettier formatter
-        "stylua", -- lua formatter
-        "isort", -- python formatter
+        "stylua",   -- lua formatter
+        "isort",    -- python formatter
         "pylint",
         "clangd",
         "black",

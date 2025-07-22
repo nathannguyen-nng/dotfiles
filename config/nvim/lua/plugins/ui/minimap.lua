@@ -2,7 +2,7 @@ return {
   "Isrothy/neominimap.nvim",
   version = "v3.*.*",
   enabled = true,
-  lazy = false,
+  cmd = "NeoMiniMap",
   dependencies = {
     "lewis6991/gitsigns.nvim",
   },
@@ -45,6 +45,10 @@ return {
     --- Put your configuration here
     vim.g.neominimap = {
       auto_enable = false,
+      diagnostic = { enabled = false },
+      git = { enabled = false },
+      mark = { enabled = false },
+      treesitter = { enabled = false },
     }
   end,
 }
