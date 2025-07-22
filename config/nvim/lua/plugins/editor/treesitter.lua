@@ -11,6 +11,7 @@ return {
       treesitter.setup({ -- enable syntax highlighting
         highlight = {
           enable = true,
+          additional_vim_regex_highlighting = false,
         },
         -- enable indentation
         indent = { enable = true },
@@ -36,12 +37,18 @@ return {
           "lua",
           "vim",
           "dockerfile",
+          "dot",
           "gitignore",
           "query",
           "vimdoc",
+          "mermaid",
+          "norg",
           "c",
+          "latex",
           "java",
+          "julia",
           "rust",
+          "r",
         },
         incremental_selection = {
           enable = true,

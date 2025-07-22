@@ -66,7 +66,7 @@ return {
       local events = require("neo-tree.events")
       opts.event_handlers = opts.event_handlers or {}
       vim.list_extend(opts.event_handlers, {
-        { event = events.FILE_MOVED, handler = on_move },
+        { event = events.FILE_MOVED,   handler = on_move },
         { event = events.FILE_RENAMED, handler = on_move },
       })
     end,
@@ -143,13 +143,13 @@ return {
       require("neo-tree").setup({
         close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
         -- popup_border_style = "NC", -- or "" to use 'winborder' on Neovim v0.11+
-        popup_border_style = "NC", -- or "" to use 'winborder' on Neovim v0.11+
+        popup_border_style = "NC",   -- or "" to use 'winborder' on Neovim v0.11+
         enable_git_status = true,
         enable_diagnostics = true,
         open_files_do_not_replace_types = { "terminal", "trouble", "qf" }, -- when opening files, do not use windows containing these filetypes or buftypes
         open_files_using_relative_paths = false,
-        sort_case_insensitive = false, -- used when sorting files and directories in the tree
-        sort_function = nil, -- use a custom function for sorting files and directories in the tree
+        sort_case_insensitive = false,                                     -- used when sorting files and directories in the tree
+        sort_function = nil,                                               -- use a custom function for sorting files and directories in the tree
         -- sort_function = function (a,b)
         --       if a.type == b.type then
         --           return a.path > b.path
@@ -222,22 +222,22 @@ return {
           -- If you don't want to use these columns, you can set `enabled = false` for each of them individually
           file_size = {
             enabled = false,
-            width = 12, -- width of the column
+            width = 12,          -- width of the column
             required_width = 64, -- min width of window required to show this column
           },
           type = {
             enabled = false,
-            width = 10, -- width of the column
+            width = 10,           -- width of the column
             required_width = 122, -- min width of window required to show this column
           },
           last_modified = {
             enabled = false,
-            width = 20, -- width of the column
+            width = 20,          -- width of the column
             required_width = 88, -- min width of window required to show this column
           },
           created = {
             enabled = false,
-            width = 20, -- width of the column
+            width = 20,           -- width of the column
             required_width = 110, -- min width of window required to show this column
           },
           symlink_target = {
@@ -253,7 +253,7 @@ return {
         },
         window = {
           position = "right",
-          width = 32,
+          width = 26,
           mapping_options = {
             noremap = true,
             nowait = true,
@@ -354,11 +354,11 @@ return {
             },
           },
           follow_current_file = {
-            enabled = false, -- This will find and focus the file in the active buffer every time
+            enabled = false,                      -- This will find and focus the file in the active buffer every time
             --               -- the current file is changed while the tree is open.
-            leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+            leave_dirs_open = false,              -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
           },
-          group_empty_dirs = false, -- when true, empty folders will be grouped together
+          group_empty_dirs = false,               -- when true, empty folders will be grouped together
           hijack_netrw_behavior = "open_default", -- netrw disabled, opening a directory opens neo-tree
           -- in whatever position is specified in window.position
           -- "open_current",  -- netrw disabled, opening a directory opens within the
@@ -407,11 +407,11 @@ return {
         },
         buffers = {
           follow_current_file = {
-            enabled = true, -- This will find and focus the file in the active buffer every time
+            enabled = true,          -- This will find and focus the file in the active buffer every time
             --              -- the current file is changed while the tree is open.
             leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
           },
-          group_empty_dirs = true, -- when true, empty folders will be grouped together
+          group_empty_dirs = true,   -- when true, empty folders will be grouped together
           show_unloaded = true,
           window = {
             mappings = {

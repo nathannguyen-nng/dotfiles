@@ -29,4 +29,18 @@ for dir in "$CONFIG_SRC"/*/; do
     echo "✅ Linked $target → $dir"
 done
 
+echo "🔗 Linking zsrc → ~/.zshrc..."
+
+ZSHRC_SRC="$CONFIG_SRC/zsh/zsrc"
+ZSHRC_DEST="$HOME/.zshrc"
+
+if [ -L "$ZSHRC_DEST" ]; then
+    rm "$ZSHRC_DEST"
+elif [ -e "$ZSHRC_DEST" ]; then
+    echo "⚠️  ~/.zshrc already exists and is not a symlink. Skipping."
+else
+    ln -s "$ZSHRC_SRC" "$ZSHRC_DEST"
+    echo "✅ Linked ~/.zshrc → $ZSHRC_SRC"
+fi
+
 echo "🎉 All eligible configs restored."

@@ -3,11 +3,13 @@ font-family-bold = "JetBrains Mono SemiBold"
 font-family-italic = "JetBrains Mono Italic"
 font-family-bold-italic = "JetBrains Mono SemiBold Italic"
 font-thicken = false
+font-thicken-strength = 0
+alpha-blending = native
 font-size = 18
 theme = light:catppuccin-latte,dark:catppuccin-frappe
 window-theme = system
 background-opacity = 0.95
-background-blur-radius = 20
+background-blur-radius = 30
 shell-integration = zsh
 keybind = global:alt+space=toggle_quick_terminal
 window-inherit-working-directory = false

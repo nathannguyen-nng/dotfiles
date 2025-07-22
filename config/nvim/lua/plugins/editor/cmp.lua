@@ -5,6 +5,7 @@ return {
   dependencies = {
     "hrsh7th/cmp-buffer", -- source for text in buffer
     "hrsh7th/cmp-path",   -- source for file system paths
+    "hrsh7th/cmp-emoji",
     {
       "L3MON4D3/LuaSnip",
       -- follow latest release.
@@ -18,6 +19,13 @@ return {
     "onsails/lspkind.nvim",         -- vs-code pictograms
     "roobert/tailwindcss-colorizer-cmp.nvim",
     "jmbuhr/otter.nvim",
+    {
+      "jc-doyle/cmp-pandoc-references",
+      dev = false,
+      ft = { 'quarto', 'markdown', 'rmarkdown' },
+    },
+    "kdheepak/cmp-latex-symbols",
+    "petertriho/cmp-git",
   },
   config = function()
     local cmp = require("cmp")
@@ -246,7 +254,17 @@ return {
         { name = "buffer",                   priority = 500 }, -- text within current buffer
         { name = "path",                     priority = 250 }, -- file system paths
         { name = "tailwindcss-colorizer-cmp" },
+        { name = "pandoc_references" },
+        {
+          name = "latex_symbols",
+          option = {
+            strategy = 0, -- mixed
+          },
+        },
+        { name = "emoji" },
+        { name = "git" }
       }),
+
 
       -- NOTE: ! Experimenting with Customized Mappings ! --
       mapping = cmp.mapping.preset.insert({
@@ -353,5 +371,6 @@ return {
         end,
       },
     })
+    require("cmp_git").setup()
   end,
 }
