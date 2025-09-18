@@ -8,7 +8,7 @@ return {
     notify = { enabled = true },
     notifier = require("plugins.util.snacks.notifier"),
     indent = require("plugins.util.snacks.indent"),
-    quickfile = require("plugins.util.snacks.quickfile"),
+    -- quickfile = require("plugins.util.snacks.quickfile"),
     input = require("plugins.util.snacks.input"),
     bigfile = require("plugins.util.snacks.bigfile"),
     dashboard = require("plugins.util.snacks.dashboard"),
@@ -18,7 +18,7 @@ return {
     -- terminal = require("plugins.util.snacks.terminal"),
     words = require("plugins.util.snacks.words"),
     picker = require("plugins.util.snacks.picker"),
-    git = { enabled = true },
+    -- git = { enabled = true },
     lazygit = require("plugins.util.snacks.lazygit"),
     rename = { enabled = true },
     image = require("plugins.util.snacks.image"),
@@ -121,56 +121,56 @@ return {
       desc = "Recent",
     },
     -- git
-    {
-      "<leader>gb",
-      function()
-        Snacks.picker.git_branches()
-      end,
-      desc = "Git Branches",
-    },
-    {
-      "<leader>gl",
-      function()
-        Snacks.picker.git_log()
-      end,
-      desc = "Git Log",
-    },
-    {
-      "<leader>gL",
-      function()
-        Snacks.picker.git_log_line()
-      end,
-      desc = "Git Log Line",
-    },
-    {
-      "<leader>gs",
-      function()
-        Snacks.picker.git_status()
-      end,
-      desc = "Git Status",
-    },
-    {
-      "<leader>gS",
-      function()
-        Snacks.picker.git_stash()
-      end,
-      desc = "Git Stash",
-    },
-    {
-      "<leader>gd",
-      function()
-        Snacks.picker.git_diff()
-      end,
-      desc = "Git Diff (Hunks)",
-    },
-    {
-      "<leader>gf",
-      function()
-        Snacks.picker.git_log_file()
-      end,
-      desc = "Git Log File",
-    },
-    -- Grep
+    -- {
+    --   "<leader>gb",
+    --   function()
+    --     Snacks.picker.git_branches()
+    --   end,
+    --   desc = "Git Branches",
+    -- },
+    -- {
+    --   "<leader>gl",
+    --   function()
+    --     Snacks.picker.git_log()
+    --   end,
+    --   desc = "Git Log",
+    -- },
+    -- {
+    --   "<leader>gL",
+    --   function()
+    --     Snacks.picker.git_log_line()
+    --   end,
+    --   desc = "Git Log Line",
+    -- },
+    -- {
+    --   "<leader>gs",
+    --   function()
+    --     Snacks.picker.git_status()
+    --   end,
+    --   desc = "Git Status",
+    -- },
+    -- {
+    --   "<leader>gS",
+    --   function()
+    --     Snacks.picker.git_stash()
+    --   end,
+    --   desc = "Git Stash",
+    -- },
+    -- {
+    --   "<leader>gd",
+    --   function()
+    --     Snacks.picker.git_diff()
+    --   end,
+    --   desc = "Git Diff (Hunks)",
+    -- },
+    -- {
+    --   "<leader>gf",
+    --   function()
+    --     Snacks.picker.git_log_file()
+    --   end,
+    --   desc = "Git Log File",
+    -- },
+    -- -- Grep
     {
       "<leader>sb",
       function()
@@ -539,7 +539,7 @@ return {
       callback = function(ev)
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
         local value = ev.data.params
-        .value --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
+            .value --[[@as {percentage?: number, title?: string, message?: string, kind: "begin" | "report" | "end"}]]
         if not client or type(value) ~= "table" then
           return
         end

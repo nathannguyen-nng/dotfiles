@@ -125,6 +125,8 @@ path+=(
   /opt/homebrew/opt/coreutils/libexec/gnubin
   /opt/homebrew/opt/inetutils/libexec/gnubin
   /opt/homebrew/opt/trash/bin
+  /opt/homebrew/opt/sqlite/bin
+  /opt/homebrew/opt/binutils/bin
 )
 export PATH
 
@@ -138,9 +140,9 @@ export SAVEHIST=10000
 setopt appendhistory 
 
 # Export compiler-related flags
-export LDFLAGS="-L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/bzip2/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/llvm/include -I/opt/homebrew/opt/bzip2/include"
-export PKG_CONFIG_PATH="/opt/homebrew/opt/zlib/lib/pkgconfig"
+export LDFLAGS="-L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/bzip2/lib -L/opt/homebrew/opt/sqlite/lib -L/opt/homebrew/opt/binutils/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/llvm/include -I/opt/homebrew/opt/bzip2/include -I/opt/homebrew/opt/sqlite/include -I/opt/homebrew/opt/binutils/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/zlib/lib/pkgconfig /opt/homebrew/opt/sqlite/lib/pkgconfig"
 
 # Brew & dev flags
 
@@ -164,6 +166,7 @@ alias college="cd ~/repo/college/"
 
 # Config editing shortcuts
 alias config-zsh="nvim -c 'cd ~/.config/zsh' ~/.zshrc"
+alias config-ssh="nvim -c 'cd ~/.ssh' ~/.ssh"
 alias config-nvim="nvim -c 'cd ~/.config/nvim/' ~/.config/nvim/"
 alias config-sketchybar="nvim -c 'cd ~/.config/sketchybar/' ~/.config/sketchybar/"
 alias config-borders="nvim -c 'cd ~/.config/borders/' ~/.config/borders/bordersrc"
@@ -173,6 +176,7 @@ alias config-yazi="nvim -c 'cd ~/.config/yazi/' ~/.config/yazi/"
 alias config-bat="nvim -c 'cd ~/.config/bat/' ~/.config/bat/config"
 alias config-fzf="nvim -c 'cd ~/.config/fzf/' ~/.config/fzf/fzfrc"
 alias config-ghostty="nvim -c 'cd ~/.config/ghostty/' ~/.config/ghostty/config"
+alias config-aerospace="nvim -c 'cd ~/.config/aerospace/' ~/.config/aerospace"
 
 # Mutagen aliases
 alias mr="mutagen sync resume cs252"

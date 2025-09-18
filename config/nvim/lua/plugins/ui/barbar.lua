@@ -1,8 +1,8 @@
 return {
   "romgrk/barbar.nvim",
-  -- event = "BufReadPre",
+  event = "BufReadPre",
   dependencies = {
-    "lewis6991/gitsigns.nvim",     -- OPTIONAL: for git status
+    "lewis6991/gitsigns.nvim", -- OPTIONAL: for git status
     "nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
   },
   init = function()
@@ -36,11 +36,11 @@ return {
         },
         undotree = {
           text = "Undo Tree",
-          align = "center",        -- *optionally* specify an alignment (either 'left', 'center', or 'right')
+          align = "center", -- *optionally* specify an alignment (either 'left', 'center', or 'right')
         },
-        codecompanion = {          -- <─ the filetype to match
+        codecompanion = { -- <─ the filetype to match
           text = "Code Companion", -- label shown in the tabline
-          align = "center",        -- 'left' | 'center' | 'right'
+          align = "center", -- 'left' | 'center' | 'right'
         },
         ["neo-tree"] = true,
 

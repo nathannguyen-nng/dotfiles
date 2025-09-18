@@ -59,14 +59,16 @@ return {
         },
       },
       adapters = {
-        anthropic = function()
-          local key = os.getenv("ANTHROPIC_API_KEY")
-          return require("codecompanion.adapters").extend("anthropic", {
-            env = {
-              api_key = key,
-            },
-          })
-        end,
+        http = {
+          anthropic = function()
+            local key = os.getenv("ANTHROPIC_API_KEY")
+            return require("codecompanion.adapters").extend("anthropic", {
+              env = {
+                api_key = key,
+              },
+            })
+          end,
+        }
       },
     })
   end,
