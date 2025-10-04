@@ -31,7 +31,7 @@ done
 
 echo "🔗 Linking zsrc → ~/.zshrc..."
 
-ZSHRC_SRC="$CONFIG_SRC/zsh/zsrc"
+ZSHRC_SRC="$CONFIG_SRC/zsh/zshrc"
 ZSHRC_DEST="$HOME/.zshrc"
 
 if [ -L "$ZSHRC_DEST" ]; then
