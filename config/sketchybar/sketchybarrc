@@ -14,7 +14,7 @@ PLUGIN_DIR="$CONFIG_DIR/plugins"
 # https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
 
 #sketchybar --bar position=top height=35 blur_radius=30 color=0x40000000
-sketchybar --bar position=top height=35 color=0x00000000 shadow=on
+sketchybar --bar position=top height=35 color=0x00000000 shadow=off blur_radius=30
 
 ##### Changing Defaults #####
 # We now change some default values, which are applied to all further items.
@@ -116,6 +116,15 @@ sketchybar --add item clock right \
   --set keyboard icon.drawing=off script="$PLUGIN_DIR/keyboard.sh" \
   --add event keyboard_change "AppleSelectedInputSourcesChangedNotification" \
   --subscribe keyboard keyboard_change
+
+
+sketchybar --add item day_progress e \
+           --set day_progress \
+                 icon=􀖈 \
+                 label="0%" \
+                 update_freq=60 \
+                 script="$PLUGIN_DIR/day_progress.sh" \
+           --subscribe day_progress system_woke
 
 sketchybar --add event aerospace_workspace_change
 

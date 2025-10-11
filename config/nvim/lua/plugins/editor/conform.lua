@@ -42,11 +42,12 @@ return {
         markdown = { "injected" },
         r = { "styler" }
       },
-      format_on_save = {
-        lsp_fallback = true,
-        async = false,
-        timeout_ms = 1000,
-      },
+      format_on_save = false,
+      -- format_on_save = {
+      --   lsp_fallback = true,
+      --   async = false,
+      --   timeout_ms = 1000,
+      -- },
     })
     -- Customize the "injected" formatter
     require('conform').formatters.injected = {

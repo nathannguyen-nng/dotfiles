@@ -29,7 +29,7 @@ for dir in "$CONFIG_SRC"/*/; do
   echo "✅ Linked $target → $dir"
 done
 
-echo "🔗 Linking zsrc → ~/.zshrc..."
+echo "🔗 Linking zshrc → ~/.zshrc..."
 
 ZSHRC_SRC="$CONFIG_SRC/zsh/zshrc"
 ZSHRC_DEST="$HOME/.zshrc"
@@ -45,16 +45,30 @@ fi
 
 echo "🔗 Linking hushlogin → ~/.hushlogin..."
 
-ZSHRC_SRC="$CONFIG_SRC/hushlogin"
-ZSHRC_DEST="$HOME/.hushlogin"
+HUSH_SRC="$CONFIG_SRC/hushlogin"
+HUSH_DEST="$HOME/.hushlogin"
 
-if [ -L "$ZSHRC_DEST" ]; then
-  rm "$ZSHRC_DEST"
-elif [ -e "$ZSHRC_DEST" ]; then
+if [ -L "$HUSH_DEST" ]; then
+  rm "$HUSK_DEST"
+elif [ -e "$HUSH_DEST" ]; then
   echo "⚠️  ~/.hushlogin already exists and is not a symlink. Skipping."
 else
-  ln -s "$ZSHRC_SRC" "$ZSHRC_DEST"
-  echo "✅ Linked ~/.hushlogin → $ZSHRC_SRC"
+  ln -s "$HUSH_SRC" "$HUSH_DEST"
+  echo "✅ Linked ~/.hushlogin → $HUSH_SRC"
+fi
+
+echo "🔗 Linking ssh config → ~/.ssh/config..."
+
+SSH_SRC="$CONFIG_SRC/ssh/config"
+SSH_DEST="$HOME/.ssh/config"
+
+if [ -L "$SSH_DEST" ]; then
+  rm "$SSH_DEST"
+elif [ -e "$SSH" ]; then
+  echo "⚠️  ~/.ssh/config already exists and is not a symlink. Skipping."
+else
+  ln -s "$SSH_SRC" "$SSH_DEST"
+  echo "✅ Linked ~/.ssh/config → $SSH_SRC"
 fi
 
 echo "🎉 All eligible configs restored."

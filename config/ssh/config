@@ -1,0 +1,53 @@
+Host *
+  SendEnv BACKGROUND
+  ServerAliveInterval 60  # Send a keep-alive message every 60 seconds
+  ServerAliveCountMax 3   # Allow up to 3 missed messages before disconnecting
+
+Host ce
+  HostName ssh.nathan.concreteengine.com
+  User nathan.nguyen
+  LocalForward 8080 localhost:8080
+
+Host ce-* 
+  HostName ssh.nathan.concreteengine.com
+  User nathan.nguyen
+  RequestTTY yes
+  RemoteCommand tmux new-session -A -s ${%n}
+  LocalForward 8080 localhost:8080
+
+Host data
+  HostName data.cs.purdue.edu
+  User nguye900
+  
+
+Host data-*
+  HostName data.cs.purdue.edu
+  User nguye900
+  RequestTTY yes
+  RemoteCommand tmux new-session -A -s ${%n}
+  
+Host scholar
+  HostName scholar.rcac.purdue.edu
+  User nguye900
+
+Host negishi
+  HostName negishi.rcac.purdue.edu
+  User nguye900
+
+Host nathan.ng
+  HostName nhu-do-khanh-nguyen.nathan.ng
+  User noon
+
+Host cgnlab.io
+  HostName nhu-do-khanh-nguyen.cgnlab.io
+  User noon
+
+Host xinu
+  HostName xinu20.cs.purdue.edu
+  User nguye900
+
+# tmux
+# Host myhost-*
+#   Hostname myhost
+#   RequestTTY yes
+#   RemoteCommand tmux new-session -A -s ${%n}

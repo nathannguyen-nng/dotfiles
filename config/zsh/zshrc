@@ -117,7 +117,7 @@ path+=(
   $HOME/.local/bin
   $HOME/.local/share/nvim/mason/bin
   $HOME/bin
-  /Users/nathan/Library/Python/3.13/bin
+  /opt/homebrew/bin/
   /opt/homebrew/opt/llvm/bin
   /opt/homebrew/opt/ed/bin
   /opt/homebrew/opt/ed/libexec/gnubin
@@ -255,6 +255,9 @@ function y() {
   fi
   rm -f -- "$tmp"
 }
+
+# homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 
 # Lazy-load Conda only when used
