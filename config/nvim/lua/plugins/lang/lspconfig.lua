@@ -305,24 +305,25 @@ return {
     lsp.config("basedpyright", {
       capabilities = capabilities,
       flags = lsp_flags,
-      root_markers = { ".git", "setup.py", "setup.cfg", "pyproject.toml", "requirements.txt" },
+      -- root_markers = { ".git", "setup.py", "setup.cfg", "pyproject.toml", "requirements.txt" },
       settings = {
         basedpyright = {
-          analysis = {
-            -- diagnosticMode = "openFilesOnly",
-            diagnosticMode = "workspace",
-            typeCheckingMode = "basic",
-            capabilities = capabilities,
-            useLibraryCodeForTypes = true,
-            diagnosticSeverityOverrides = {
-              autoSearchPaths = true,
-              enableTypeIgnoreComments = false,
-              reportGeneralTypeIssues = "none",
-              reportArgumentType = "none",
-              reportUnknownMemberType = "none",
-              reportAssignmentType = "none",
-            },
-          },
+          disableOrganizeImports = false,
+        --   analysis = {
+        --     -- diagnosticMode = "openFilesOnly",
+        --     diagnosticMode = "workspace",
+        --     typeCheckingMode = "basic",
+        --     capabilities = capabilities,
+        --     useLibraryCodeForTypes = true,
+        --     diagnosticSeverityOverrides = {
+        --       autoSearchPaths = true,
+        --       enableTypeIgnoreComments = false,
+        --       reportGeneralTypeIssues = "none",
+        --       reportArgumentType = "none",
+        --       reportUnknownMemberType = "none",
+        --       reportAssignmentType = "none",
+        --     },
+        --   },
         },
       },
     })

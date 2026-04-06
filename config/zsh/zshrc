@@ -118,7 +118,6 @@ path+=(
   $HOME/.local/share/nvim/mason/bin
   $HOME/bin
   /opt/homebrew/bin/
-  /opt/homebrew/opt/llvm/bin
   /opt/homebrew/opt/ed/bin
   /opt/homebrew/opt/ed/libexec/gnubin
   /opt/homebrew/opt/findutils/libexec/gnubin
@@ -128,6 +127,7 @@ path+=(
   /opt/homebrew/opt/sqlite/bin
   /opt/homebrew/opt/binutils/bin
 )
+path=(/opt/homebrew/opt/llvm/bin $path)
 export PATH
 
 # Common env variables
@@ -140,6 +140,8 @@ export SAVEHIST=10000
 setopt appendhistory 
 
 # Export compiler-related flags
+export CC="/opt/homebrew/opt/llvm/bin/clang"
+export CXX="$CC++"
 export LDFLAGS="-L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/bzip2/lib -L/opt/homebrew/opt/sqlite/lib -L/opt/homebrew/opt/binutils/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/llvm/include -I/opt/homebrew/opt/bzip2/include -I/opt/homebrew/opt/sqlite/include -I/opt/homebrew/opt/binutils/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/zlib/lib/pkgconfig /opt/homebrew/opt/sqlite/lib/pkgconfig"
@@ -177,11 +179,6 @@ alias config-bat="nvim -c 'cd ~/.config/bat/' ~/.config/bat/config"
 alias config-fzf="nvim -c 'cd ~/.config/fzf/' ~/.config/fzf/fzfrc"
 alias config-ghostty="nvim -c 'cd ~/.config/ghostty/' ~/.config/ghostty/config"
 alias config-aerospace="nvim -c 'cd ~/.config/aerospace/' ~/.config/aerospace"
-
-# Mutagen aliases
-alias mr="mutagen sync resume cs252"
-alias mp="mutagen sync pause cs252"
-alias ml="mutagen sync list"
 
 
 # Set up fzf key bindings and fuzzy completion
@@ -289,3 +286,20 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/nathan/.lmstudio/bin"
+# End of LM Studio CLI section
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/nathan/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+
+# Added by Antigravity
+export PATH="/Users/nathan/.antigravity/antigravity/bin:$PATH"
+
+# Complex Flow
+# GROMACS
+alias source-gromacs="source /usr/local/gromacs/bin/GMXRC"

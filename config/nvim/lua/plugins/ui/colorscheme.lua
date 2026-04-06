@@ -36,7 +36,15 @@ return {
         -- miscs = {}, -- Uncomment to turn off hard-coded styles
       },
       color_overrides = {},
-      custom_highlights = {},
+      custom_highlights = function(colors)
+              return {
+                  Pmenu = { bg = colors.none },
+                  PmenuSel = { bg = colors.none },
+                  NormalFloat = { bg = colors.none },
+                  FloatBorder = { bg = colors.none },
+                  FloatTitle = { bg = colors.none },
+              }
+          end,
       default_integrations = true,
       integrations = {
         cmp = true,
@@ -88,6 +96,5 @@ return {
         -- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
       },
     })
-    -- vim.cmd.colorscheme("catppuccin")
   end,
 }

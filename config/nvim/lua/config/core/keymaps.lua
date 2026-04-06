@@ -32,7 +32,7 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "<C-c>", ":nohl<CR>", { desc = "Clear search highlights", silent = true })
 
 -- Set format key
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+-- vim.keymap.set("n", "<leader>f", vim.lsp.buf.format) -- Use conform.nvim instead
 
 -- Set Q to nop
 vim.keymap.set("n", "Q", "<nop>")
@@ -87,10 +87,10 @@ vim.keymap.set("n", "<leader>fp", function()
   print("File path copied to clipboard: " .. filePath)
 end, { desc = "Copy file path to clipboard" })
 
--- Compile C++
+-- Compile C++ for Competitive Programming
 vim.keymap.set(
   "n",
-  "<leader>cp",
+  "<leader>ccp",
   ":w<CR>:!clang++ -I$HOME/repo/study/cp/lib -fsanitize=address -std=c++17 -Wall -Wextra -Wshadow -DONPC -gdwarf-4 -O0 -o %< %<CR>",
   { noremap = true, silent = false, desc = "Compile current C++ file (CP)" }
 )

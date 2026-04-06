@@ -74,7 +74,6 @@
                     },
                     {
                         "description": "Map Caps Lock + 1-7 to Alt + 1-7",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [
@@ -220,7 +219,6 @@
                     },
                     {
                         "description": "CAPS › ESC, CAPS+H/J/K/L › ←↓↑→, CAPS+D/U › PG↓↑",
-                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [

@@ -1,6 +1,6 @@
 -- Use python3 from homebrew
 -- vim.g.python3_host_prog = "/opt/homebrew/bin/python3"
-vim.g.python3_host_prog = "/opt/homebrew/Caskroom/miniconda/base/envs/ml/bin/python3.11"
+-- vim.g.python3_host_prog = "/opt/homebrew/Caskroom/miniconda/base/envs/ml/bin/python3.11"
 
 vim.cmd("let g:netrw_banner = 0") -- Disable NetRW file explorer banner
 
