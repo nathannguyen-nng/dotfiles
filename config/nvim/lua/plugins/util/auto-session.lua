@@ -1,5 +1,5 @@
 return {
-  enabled = false,
+  enabled = true,
   "rmagatti/auto-session",
   opts = {
     auto_restore_enabled = false,
