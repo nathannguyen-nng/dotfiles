@@ -1,3 +1,0 @@
-return {
-  win = { style = "terminal" },
-}
