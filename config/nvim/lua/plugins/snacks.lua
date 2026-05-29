@@ -32,9 +32,9 @@ Snacks.setup({
 	},
 	dashboard = { enabled = false },
 	dim = { enabled = true },
-	explorer = { enabled = true, replace_netrw = true },
+	explorer = { enabled = true, replace_netrw = true, trash = true },
 	image = { enabled = true },
-	indent = { enabled = true },
+	indent = { enabled = true, char = "┆" },
 	input = { enabled = true },
 	layout = { enabled = true },
 	notifier = { enabled = true },
@@ -146,7 +146,13 @@ Snacks.setup({
 				hidden = true,
 				ignored = true,
 				supports_live = true,
-				auto_close = true,
+				auto_close = false,
+				toggle = false,
+          layout = {
+            layout = {
+              position = "right"
+            },
+          },
 				diagnostics = true,
 				diagnostics_open = false,
 				focus = "list",
@@ -154,7 +160,7 @@ Snacks.setup({
 				git_status = true,
 				git_status_open = false,
 				git_untracked = true,
-				jump = { close = true },
+				jump = { close = false },
 				tree = true,
 				watch = true,
 				exclude = {
@@ -220,6 +226,16 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			Snacks.toggle.zoom():map("<leader>wm"):map("<leader>uZ")
 			Snacks.toggle.zen():map("<leader>uz")
 		end)
+		-- Open explorer on startup
+		Snacks.explorer()
+
+		-- Re-trigger indent attachment for buffers loaded before snacks was ready
+		-- (happens when a session is restored — buffers exist before VimEnter fires)
+		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+			if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
+				vim.api.nvim_exec_autocmds("BufEnter", { buffer = buf })
+			end
+		end
 	end,
 })
 

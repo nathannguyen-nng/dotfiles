@@ -200,4 +200,39 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	end,
 })
 
+local sidebar_fts = { snacks_explorer = true, snacks_picker_list = true }
+
+local function only_sidebars_remain()
+	local real_wins = vim.tbl_filter(function(w)
+		if not vim.api.nvim_win_is_valid(w) then return false end
+		local buf = vim.api.nvim_win_get_buf(w)
+		local ft = vim.bo[buf].filetype
+		return not sidebar_fts[ft]
+	end, vim.api.nvim_list_wins())
+	return #real_wins == 0
+end
+
+-- Quit nvim when the last real window is closed and only sidebar windows remain.
+vim.api.nvim_create_autocmd("WinClosed", {
+	group = augroup("quit_with_explorer"),
+	callback = function()
+		if only_sidebars_remain() then
+			vim.schedule(function() vim.cmd("qall") end)
+		end
+	end,
+})
+
+-- Also catch :q on [NO NAME] buffers — neovim may hide the window rather than
+-- fire WinClosed when it decides to reuse the buffer for the explorer window.
+vim.api.nvim_create_autocmd("QuitPre", {
+	group = augroup("quit_with_explorer_pre"),
+	callback = function()
+		vim.schedule(function()
+			if only_sidebars_remain() then
+				vim.cmd("qall")
+			end
+		end)
+	end,
+})
+
 

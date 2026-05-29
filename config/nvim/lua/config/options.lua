@@ -26,7 +26,7 @@ opt.termguicolors = true -- Enable 24-bit colors
 opt.signcolumn = "yes" -- Always show sign column
 opt.showmatch = true -- Highlight matching brackets
 opt.matchtime = 2 -- How long to show matching bracket
-opt.cmdheight = 1 -- Command line height
+opt.cmdheight = 0 -- Command line height
 opt.showmode = false -- Don't show mode in command line
 opt.pumheight = 10 -- Popup menu height
 opt.pumblend = 10 -- Popup menu transparency
@@ -120,6 +120,15 @@ opt.jumpoptions = "view"
 opt.laststatus = 3 -- global statusline
 opt.linebreak = true -- Wrap lines at convenient points
 opt.list = false -- Show some invisible characters (tabs...)
+-- opt.listchars = {
+--   -- tab = "→ ",
+--   -- trail = "·",
+--   -- nbsp = "␣",
+--   tab = "   ",
+--   trail = "·",
+--   nbsp = "␣",
+--   leadmultispace = "┆ "
+-- }
 opt.shiftround = true -- Round indent
 opt.shiftwidth = 2 -- Size of an indent
 opt.shortmess:append({ W = true, I = true, c = true, C = true })

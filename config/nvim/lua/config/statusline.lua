@@ -1,74 +1,73 @@
 local M = {}
 
-local NONE = "NONE"
-local palette = {
-	burgundy = "#5f2d3b",
-	charcoal_gray = "#2c2f33",
-	dark_cyan = "#2a303c",
-	dark_gray = "#1d2021",
-	dark_sienna = "#4a2e2a",
-	deep_teal = "#2e4954",
-	forest_mist = "#35403b",
-	green = "#89b482",
-	light_gray = "#ebdbb2",
-	light_green = "#a9b665",
-	midnight_blue = "#1e2630",
-	moss_green = "#3e4a33",
-	pink = "#d3869b",
-	red = "#ea6962",
-	sky_blue = "#7daea3",
-	slate_blue = "#3b4261",
-	smoky_orchid = "#574b65",
-	soft_violet = "#4c4567",
-	teal = "#458588",
-	yellow = "#d8a657",
-}
+local function apply_highlights()
+	local ok, cp = pcall(require, "catppuccin.palettes")
+	local p = ok and cp.get_palette() or {}
 
--- Helper to issue highlight commands
-local function hi(group, opts)
-	local cmd = { "highlight!", group }
-	if opts.guibg then
-		table.insert(cmd, "guibg=" .. opts.guibg)
+	local function hl(group, opts)
+		vim.api.nvim_set_hl(0, group, opts)
 	end
-	if opts.guifg then
-		table.insert(cmd, "guifg=" .. opts.guifg)
-	end
-	if opts.gui then
-		table.insert(cmd, "gui=" .. opts.gui)
-	end
-	vim.cmd(table.concat(cmd, " "))
+
+	-- surface0 has real contrast from base in both latte and frappe
+	-- (mantle is too close to base in latte)
+	local bar_bg = p.surface0
+	local bar_fg = p.subtext1
+
+	hl("StatusLine", { bg = bar_bg, fg = bar_fg })
+	hl("StatusLineNC", { bg = bar_bg, fg = p.overlay0 })
+
+	-- Per-mode highlight groups (bg changes per mode)
+	hl("StatusModeNormal",   { bg = p.green,  fg = p.crust, bold = true })
+	hl("StatusModeInsert",   { bg = p.blue,   fg = p.crust, bold = true })
+	hl("StatusModeVisual",   { bg = p.mauve,  fg = p.crust, bold = true })
+	hl("StatusModeReplace",  { bg = p.red,    fg = p.crust, bold = true })
+	hl("StatusModeCommand",  { bg = p.peach,  fg = p.crust, bold = true })
+	hl("StatusModeTerminal", { bg = p.teal,   fg = p.crust, bold = true })
+	-- Transition arrows (fg = mode bg so powerline arrow blends)
+	hl("StatusModeNormalSep",   { bg = bar_bg, fg = p.green  })
+	hl("StatusModeInsertSep",   { bg = bar_bg, fg = p.blue   })
+	hl("StatusModeVisualSep",   { bg = bar_bg, fg = p.mauve  })
+	hl("StatusModeReplaceSep",  { bg = bar_bg, fg = p.red    })
+	hl("StatusModeCommandSep",  { bg = bar_bg, fg = p.peach  })
+	hl("StatusModeTerminalSep", { bg = bar_bg, fg = p.teal   })
+
+	hl("StatusGit", { bg = p.surface1, fg = p.text, bold = true })
+	hl("StatusGitToNorm", { bg = bar_bg, fg = p.mauve })
+	hl("StatusDiffAdd", { bg = bar_bg, fg = p.green, bold = true })
+	hl("StatusDiffChange", { bg = bar_bg, fg = p.yellow, bold = true })
+	hl("StatusDiffDelete", { bg = bar_bg, fg = p.red, bold = true })
+
+	hl("StatusFile", { bg = bar_bg, fg = p.text, bold = true })
+	hl("StatusFileToNorm", { bg = bar_bg, fg = bar_fg })
+
+	hl("StatusLSP", { bg = bar_bg, fg = p.text, bold = true })
+	hl("StatusLSPToNorm", { bg = bar_bg, fg = bar_fg })
+
+	hl("StatusErrorIcon", { bg = bar_bg, fg = p.red, bold = true })
+	hl("StatusWarnIcon", { bg = bar_bg, fg = p.yellow, bold = true })
+	hl("StatusInfoIcon", { bg = bar_bg, fg = p.blue })
+	hl("StatusHintIcon", { bg = bar_bg, fg = p.teal })
+
+	hl("StatusBuffer", { bg = p.surface1, fg = p.text })
+	hl("StatusType", { bg = p.surface1, fg = p.text })
+	hl("StatusNorm", { bg = bar_bg, fg = bar_fg })
+	hl("StatusLocation", { bg = p.surface2, fg = p.text })
+	hl("StatusPercent", { bg = p.teal, fg = p.crust, bold = true })
+
+	-- Transparent backgrounds for floating/picker windows
+	hl("SnacksPickerList",    { link = "Normal" })
+	hl("SnacksPickerInput",   { link = "Normal" })
+	hl("SnacksPicker",        { link = "Normal" })
+	hl("TinyCmdlineNormal",   { link = "Normal" })
 end
 
-hi("StatusLine", { guibg = NONE, guifg = NONE })
-hi("StatusLineNC", { guibg = NONE, guifg = NONE })
+-- Defer so catppuccin is loaded before first apply
+vim.schedule(apply_highlights)
 
-hi("StatusMode", { guibg = palette.green, guifg = palette.dark_gray, gui = "bold" })
-hi("StatusModeToNorm", { guibg = NONE, guifg = palette.green })
-
--- git
-hi("StatusGit", { guibg = palette.dark_sienna, guifg = palette.light_gray, gui = "bold" })
-hi("StatusGitToNorm", { guibg = NONE, guifg = palette.pink })
-hi("StatusDiffAdd", { guibg = NONE, guifg = palette.light_green, gui = "bold" })
-hi("StatusDiffChange", { guibg = NONE, guifg = palette.yellow, gui = "bold" })
-hi("StatusDiffDelete", { guibg = NONE, guifg = palette.red, gui = "bold" })
-
---file
-hi("StatusFile", { guibg = NONE, guifg = NONE, gui = "bold" })
-hi("StatusFileToNorm", { guibg = NONE, guifg = NONE })
-
-hi("StatusLSP", { guibg = NONE, guifg = NONE, gui = "bold" })
-hi("StatusLSPToNorm", { guibg = NONE, guifg = NONE })
-
-hi("StatusErrorIcon", { guibg = NONE, guifg = palette.red, gui = "bold" })
-hi("StatusWarnIcon", { guibg = NONE, guifg = palette.yellow, gui = "bold" })
-hi("StatusInfoIcon", { guibg = NONE, guifg = palette.sky_blue, gui = "bold" })
-hi("StatusHintIcon", { guibg = NONE, guifg = palette.light_green })
-
-hi("StatusBuffer", { guibg = palette.dark_cyan, guifg = palette.light_gray })
-hi("StatusType", { guibg = palette.dark_cyan, guifg = palette.light_gray })
-hi("StatusNorm", { guibg = NONE, guifg = NONE })
-hi("StatusLocation", { guibg = palette.soft_violet, guifg = palette.light_gray })
-hi("StatusPercent", { guibg = palette.teal, guifg = palette.dark_gray, gui = "bold" })
+vim.api.nvim_create_autocmd("ColorScheme", {
+	group = vim.api.nvim_create_augroup("StatuslineHL", { clear = true }),
+	callback = function() vim.schedule(apply_highlights) end,
+})
 
 local fn = vim.fn
 
@@ -211,16 +210,40 @@ local function word_reading()
 end
 
 -- Mode icons
-local mode_icons = {
-	n = " NORMAL",
-	c = " COMMAND",
-	t = " TERMINAL",
-	i = " INSERT",
-	R = " REPLACE",
-	V = " V-LINE",
-	[" "] = " V-BLOCK", -- Visual Block
-	r = " R-PENDING",
-	v = " VISUAL",
+local mode_labels = {
+	n      = " NORMAL",
+	c      = " COMMAND",
+	t      = " TERMINAL",
+	i      = " INSERT",
+	R      = " REPLACE",
+	V      = " V-LINE",
+	["\22"] = " V-BLOCK",
+	r      = " R-PENDING",
+	v      = " VISUAL",
+}
+
+local mode_hl = {
+	n      = "StatusModeNormal",
+	c      = "StatusModeCommand",
+	t      = "StatusModeTerminal",
+	i      = "StatusModeInsert",
+	R      = "StatusModeReplace",
+	V      = "StatusModeVisual",
+	["\22"] = "StatusModeVisual",
+	r      = "StatusModeReplace",
+	v      = "StatusModeVisual",
+}
+
+local mode_sep_hl = {
+	n      = "StatusModeNormalSep",
+	c      = "StatusModeCommandSep",
+	t      = "StatusModeTerminalSep",
+	i      = "StatusModeInsertSep",
+	R      = "StatusModeReplaceSep",
+	V      = "StatusModeVisualSep",
+	["\22"] = "StatusModeVisualSep",
+	r      = "StatusModeReplaceSep",
+	v      = "StatusModeVisualSep",
 }
 
 -- 4) Build statusline
@@ -229,7 +252,9 @@ function M.build()
 
 	-- A: mode
 	local m = fn.mode()
-	st = st .. "%#StatusMode# " .. (mode_icons[m] or m) .. " " .. "%#StatusModeToNorm#"
+	local mhl  = mode_hl[m]     or "StatusModeNormal"
+	local msep = mode_sep_hl[m] or "StatusModeNormalSep"
+	st = st .. "%#" .. mhl .. "# " .. (mode_labels[m] or m) .. " %#" .. msep .. "#"
 
 	-- B: git
 	local br = get_git_branch()
@@ -291,6 +316,13 @@ end
 vim.opt.laststatus = 3 -- global statusline
 vim.opt.showmode = false -- Dont show mode since we have a statusline
 vim.o.statusline = "%!v:lua.require('config.statusline').build()"
+
+-- Force immediate redraw on every mode transition so the indicator
+-- updates without waiting for cursor movement (e.g. V-LINE on first keypress).
+vim.api.nvim_create_autocmd("ModeChanged", {
+	pattern = "*",
+	callback = function() vim.cmd.redrawstatus() end,
+})
 
 return M
 

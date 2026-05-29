@@ -73,3 +73,26 @@ require("catppuccin").setup({
 
 -- setup must be called before loading
 vim.cmd.colorscheme "catppuccin-nvim"
+
+-- Re-apply colorscheme when the terminal signals a system theme change.
+-- Catppuccin flavour="auto" reads vim.o.background, so reloading picks up the new flavor.
+-- Debounced + value-guarded: tmux focus switches can spam OptionSet background without
+-- actually changing the value (OSC 11 terminal queries), causing unnecessary reloads.
+local _bg_last = vim.o.background
+local _bg_timer = nil
+vim.api.nvim_create_autocmd("OptionSet", {
+	pattern = "background",
+	callback = function()
+		local new_bg = vim.o.background
+		if new_bg == _bg_last then return end
+		_bg_last = new_bg
+		if _bg_timer then
+			_bg_timer:stop()
+			_bg_timer:close()
+		end
+		_bg_timer = vim.defer_fn(function()
+			_bg_timer = nil
+			vim.cmd.colorscheme "catppuccin-nvim"
+		end, 100)
+	end,
+})

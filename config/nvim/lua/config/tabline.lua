@@ -23,10 +23,14 @@ vim.api.nvim_create_autocmd(_tab_invalidate_events, {
 })
 
 function M.set_highlights()
-	vim.api.nvim_set_hl(0, "MyBufInactive", { fg = "#ABB2BF", bg = "#282C34" })
-	vim.api.nvim_set_hl(0, "MyBufActive", { fg = "#ECEFF4", bg = "#3E4451", bold = true })
-	vim.api.nvim_set_hl(0, "MyBufSeparator", { fg = "#21252B", bg = "#282C34" })
-	vim.api.nvim_set_hl(0, "MyBufClose", { fg = "#BF616A", bg = "#3E4451" })
+	local ok, cp = pcall(require, "catppuccin.palettes")
+	local p = ok and cp.get_palette() or {}
+	local bar_bg = p.surface0 or "#282C34"
+	vim.api.nvim_set_hl(0, "TabLineFill", { link = "Normal" })
+	vim.api.nvim_set_hl(0, "MyBufInactive", { fg = p.subtext0 or "#ABB2BF", bg = bar_bg })
+	vim.api.nvim_set_hl(0, "MyBufActive", { fg = p.text or "#ECEFF4", bg = p.surface2 or "#3E4451", bold = true })
+	vim.api.nvim_set_hl(0, "MyBufSeparator", { fg = p.mantle or "#21252B", bg = bar_bg })
+	vim.api.nvim_set_hl(0, "MyBufClose", { fg = p.red or "#BF616A", bg = p.surface2 or "#3E4451" })
 end
 
 -- Safe devicons resolve (cached per render)
@@ -56,6 +60,40 @@ local function get_display_name(path)
 	end
 end
 
+-- Click handlers (minwid = bufnr)
+function _G.tabline_buf_click(bufnr, clicks, button)
+	if button == "l" then
+		vim.api.nvim_set_current_buf(bufnr)
+	elseif button == "m" then
+		pcall(vim.api.nvim_buf_delete, bufnr, { force = false })
+	end
+end
+
+function _G.tabline_close_click(bufnr, clicks, button)
+	if button == "l" then
+		-- If closing the current buffer, switch to an adjacent one first
+		if vim.api.nvim_get_current_buf() == bufnr then
+			local listed = vim.tbl_filter(function(b)
+				return b ~= bufnr and vim.api.nvim_buf_is_loaded(b) and vim.bo[b].buflisted
+			end, vim.api.nvim_list_bufs())
+			if #listed > 0 then
+				-- prefer the next buffer, fall back to previous
+				local next_buf = nil
+				for _, b in ipairs(listed) do
+					if b > bufnr then next_buf = b; break end
+				end
+				vim.api.nvim_set_current_buf(next_buf or listed[#listed])
+			else
+				-- no other listed buffers — force-create a new one (enew reuses the
+				-- same unmodified buffer, so we'd delete what we just switched to)
+				local new_buf = vim.api.nvim_create_buf(true, false)
+				vim.api.nvim_set_current_buf(new_buf)
+			end
+		end
+		pcall(vim.api.nvim_buf_delete, bufnr, { force = false })
+	end
+end
+
 -- Render a single buffer chunk
 local function render_buf(bufnr, current)
 	if not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -73,18 +111,24 @@ local function render_buf(bufnr, current)
 
 	if bufnr == current then
 		return table.concat({
+			"%" .. bufnr .. "@v:lua.tabline_buf_click@",
 			"%#MyBufActive# ",
 			content,
-			" %#MyBufClose#",
+			" %X",
+			"%" .. bufnr .. "@v:lua.tabline_close_click@",
+			"%#MyBufClose#",
 			CLOSE,
+			"%X",
 			" %#MyBufSeparator#",
 			SEP,
 		})
 	else
 		return table.concat({
+			"%" .. bufnr .. "@v:lua.tabline_buf_click@",
 			"%#MyBufInactive# ",
 			content,
-			"  %#MyBufSeparator#",
+			"  %X",
+			"%#MyBufSeparator#",
 			SEP,
 		})
 	end
@@ -122,12 +166,12 @@ function _G.tabline()
 end
 
 function M.setup()
-	M.set_highlights()
+	vim.schedule(M.set_highlights) -- defer so catppuccin is loaded first
 
 	vim.api.nvim_create_augroup("MyTabline", { clear = true })
 	vim.api.nvim_create_autocmd("ColorScheme", {
 		group = "MyTabline",
-		callback = M.set_highlights,
+		callback = function() vim.schedule(M.set_highlights) end,
 	})
 
 	vim.opt.showtabline = 2
