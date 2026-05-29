@@ -22,6 +22,7 @@ opt.hlsearch = false -- Don't highlight search results
 opt.incsearch = true -- Show matches as you type
 
 -- Visual settings
+opt.colorcolumn = "120" -- Ruler at 120 chars
 opt.termguicolors = true -- Enable 24-bit colors
 opt.signcolumn = "yes" -- Always show sign column
 opt.showmatch = true -- Highlight matching brackets

@@ -200,7 +200,19 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	end,
 })
 
-local sidebar_fts = { snacks_explorer = true, snacks_picker_list = true }
+local sidebar_fts = { snacks_explorer = true, snacks_picker_list = true, snacks_picker_input = true }
+
+-- Hide colorcolumn and other distracting UI in sidebar windows
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup("sidebar_clean"),
+	pattern = { "snacks_explorer", "snacks_picker_list", "snacks_picker_input" },
+	callback = function()
+		vim.wo.colorcolumn = ""
+		vim.wo.number = false
+		vim.wo.relativenumber = false
+		vim.wo.signcolumn = "no"
+	end,
+})
 
 local function only_sidebars_remain()
 	local real_wins = vim.tbl_filter(function(w)

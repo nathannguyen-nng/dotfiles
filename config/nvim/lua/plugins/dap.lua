@@ -17,7 +17,7 @@ local function init_dap()
 	local dap = require("dap")
 	local dapui = require("dapui")
 
-	local js_debug_path = vim.fn.expand("$HOME/.config/nvim/vscode_extensions/js-debug/src/dapDebugServer.js")
+	local js_debug_path = vim.fn.expand("$HOME/debuggers/js-debug/src/dapDebugServer.js")
 	dap.adapters["pwa-node"] = {
 		type = "server",
 		host = "localhost",
@@ -84,38 +84,38 @@ local function init_dap()
 		}
 	end
 
-  -- C/C++
-  dap.adapters.lldb = {
-    type = 'executable',
-    command = '/opt/homebrew/opt/llvm/bin/lldb-dap', -- adjust as needed, must be absolute path
-    name = 'lldb'
-  }
-  dap.configurations.cpp = {
-  {
-    name = 'Launch',
-    type = 'lldb',
-    request = 'launch',
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    cwd = '${workspaceFolder}',
-    stopOnEntry = false,
-    args = {},
+	-- C/C++
+	dap.adapters.lldb = {
+		type = "executable",
+		command = "/opt/homebrew/opt/llvm/bin/lldb-dap", -- adjust as needed, must be absolute path
+		name = "lldb",
+	}
+	dap.configurations.cpp = {
+		{
+			name = "Launch",
+			type = "lldb",
+			request = "launch",
+			program = function()
+				return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+			end,
+			cwd = "${workspaceFolder}",
+			stopOnEntry = false,
+			args = {},
 
-    -- 💀
-    -- if you change `runInTerminal` to true, you might need to change the yama/ptrace_scope setting:
-    --
-    --    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
-    --
-    -- Otherwise you might get the following error:
-    --
-    --    Error on launch: Failed to attach to the target process
-    --
-    -- But you should be aware of the implications:
-    -- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
-    -- runInTerminal = false,
-  },
-}
+			-- 💀
+			-- if you change `runInTerminal` to true, you might need to change the yama/ptrace_scope setting:
+			--
+			--    echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+			--
+			-- Otherwise you might get the following error:
+			--
+			--    Error on launch: Failed to attach to the target process
+			--
+			-- But you should be aware of the implications:
+			-- https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html
+			-- runInTerminal = false,
+		},
+	}
 
 	-- DAP UI setup
 	dapui.setup({
@@ -177,4 +177,3 @@ vim.keymap.set("n", "<leader>dt", function()
 end, { desc = "Terminate" })
 vim.keymap.set("n", "<leader>dw", function() init_dap(); require("dap.ui.widgets").hover() end, { desc = "DAP Widgets" })
 vim.keymap.set("n","<leader>du", function() init_dap(); require("dapui").toggle({}) end, {desc = "Dap UI"})
-

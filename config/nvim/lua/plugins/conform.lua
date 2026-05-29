@@ -1,15 +1,12 @@
 vim.pack.add({ "https://github.com/stevearc/conform.nvim" })
 
-
-
 require("conform").setup({
 
 	formatters_by_ft = {
-    c = {"clang-format"},
-    cpp = {"clang-format"},
-    cmake = {"cmake_format"},
+		c = { "clang-format" },
+		cpp = { "clang-format" },
+		cmake = { "cmake_format" },
 		lua = { "stylua" },
-		go = { "goimports", "gofmt", stop_after_first = true },
 		python = { "ruff_format", "black", stop_after_first = true },
 		json = { "biome", "prettier", stop_after_first = true },
 		markdown = { "prettier" },
@@ -30,7 +27,6 @@ require("conform").setup({
 	},
 
 	format_on_save = function(bufnr)
-
 		local ignore_filetypes = { "sql", "yaml", "yml" }
 
 		if vim.tbl_contains(ignore_filetypes, vim.bo[bufnr].filetype) then
@@ -79,7 +75,6 @@ end, { desc = "Toggle Autoformat" })
 
 vim.keymap.set({ "n", "v" }, "<leader>cn", "<cmd>ConformInfo<cr>", { desc = "Conform Info" })
 vim.keymap.set({ "n", "v" }, "<leader>cf", function()
-
 	require("conform").format({ async = true }, function(err, did_edit)
 		if not err and did_edit then
 			vim.notify("Code formatted", vim.log.levels.INFO, { title = "Conform" })
@@ -90,4 +85,3 @@ end, { desc = "Format buffer" })
 vim.keymap.set({ "n", "v" }, "<leader>cF", function()
 	require("conform").format({ formatters = { "injected" }, timeout_ms = 3000 })
 end, { desc = "Format Injected Langs" })
-

@@ -34,7 +34,7 @@ Snacks.setup({
 	dim = { enabled = true },
 	explorer = { enabled = true, replace_netrw = true, trash = true },
 	image = { enabled = true },
-	indent = { enabled = true, char = "┆" },
+	indent = { enabled = true, char = "▏" },
 	input = { enabled = true },
 	layout = { enabled = true },
 	notifier = { enabled = true },
@@ -148,11 +148,12 @@ Snacks.setup({
 				supports_live = true,
 				auto_close = false,
 				toggle = false,
-          layout = {
-            layout = {
-              position = "right"
-            },
-          },
+				layout = {
+					layout = {
+						position = "right",
+						width = 30,
+					},
+				},
 				diagnostics = true,
 				diagnostics_open = false,
 				focus = "list",
@@ -216,7 +217,9 @@ vim.api.nvim_create_autocmd("VimEnter", {
 				})
 				:map("<leader>uA")
 			Snacks.toggle.treesitter():map("<leader>uT")
-			Snacks.toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>ub")
+			Snacks.toggle
+				.option("background", { off = "light", on = "dark", name = "Dark Background" })
+				:map("<leader>ub")
 			Snacks.toggle.dim():map("<leader>uD")
 			Snacks.toggle.animate():map("<leader>ua")
 			Snacks.toggle.indent():map("<leader>ug")
@@ -226,8 +229,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			Snacks.toggle.zoom():map("<leader>wm"):map("<leader>uZ")
 			Snacks.toggle.zen():map("<leader>uz")
 		end)
-		-- Open explorer on startup
-		Snacks.explorer()
+		-- Open explorer on startup.
+		-- Skip if launched with a directory arg — replace_netrw already opened it,
+		-- and calling again would toggle it closed.
+		local is_dir = vim.fn.argc() > 0 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
+		if not is_dir then
+			Snacks.explorer()
+		end
 
 		-- Re-trigger indent attachment for buffers loaded before snacks was ready
 		-- (happens when a session is restored — buffers exist before VimEnter fires)
@@ -281,6 +289,7 @@ local   keymaps = {
     -- Grep
     { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
     { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" },
+    { "<leader>fs", function() Snacks.picker.grep() end, desc = "Find files containing string" },
     { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } },
     -- search
@@ -370,4 +379,3 @@ for _, map in ipairs(keymaps) do
 	local mode = map.mode or "n"
 	vim.keymap.set(mode, map[1], map[2], opts)
 end
-
