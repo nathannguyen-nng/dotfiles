@@ -90,7 +90,6 @@ local renderOpts = {
 	checkbox = {
 		enabled = true,
 		render_modes = true,
-		position = "inline",
 		unchecked = {
 			icon = "󰄱 ",
 			highlight = "RenderMarkdownUnchecked",
@@ -136,7 +135,6 @@ local renderOpts = {
 		alignment_indicator = "━",
 		head = "RenderMarkdownTableHead",
 		row = "RenderMarkdownTableRow",
-		filler = "RenderMarkdownTableFill",
 	},
 	callout = {
 		note = { raw = "[!NOTE]", rendered = "󰋽 Note", highlight = "RenderMarkdownInfo" },
