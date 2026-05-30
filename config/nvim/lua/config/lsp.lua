@@ -4,7 +4,7 @@ local function augroup(name)
 end
 
 local default_keymaps = {
-	{ keys = "<leader>ca", func = vim.lsp.buf.code_action, desc = "Code Actions" },
+	{ keys = "<leader>ca", func = vim.lsp.buf.code_action, desc = "Code Action" },
 	{
 		keys = "<leader>cl",
 		func = function()
@@ -19,29 +19,15 @@ local default_keymaps = {
 				})
 			end
 		end,
-		desc = "LSP Fix All",
+		desc = "Fix All",
 	},
-	{ keys = "<leader>cr", func = vim.lsp.buf.rename, desc = "Code Rename" },
-	{ keys = "<leader>k", func = vim.lsp.buf.hover, desc = "Hover Documentation", has = "hoverProvider" },
-	{ keys = "K", func = vim.lsp.buf.hover, desc = "Hover (alt)", has = "hoverProvider" },
-	{ keys = "gd", func = vim.lsp.buf.definition, desc = "Goto Definition", has = "definitionProvider" },
-	{
-		keys = "grt",
-		func = vim.lsp.buf.type_definition,
-		desc = "Goto Type Definition",
-		has = "typeDefinitionProvider",
-	},
+	{ keys = "<leader>cr", func = vim.lsp.buf.rename, desc = "Rename" },
+	{ keys = "K", func = vim.lsp.buf.hover, desc = "Hover", has = "hoverProvider" },
 	{ keys = "grx", func = vim.lsp.codelens.run, desc = "Run Codelens", has = "codeLensProvider" },
 	{ keys = "<leader>cw", func = vim.lsp.buf.workspace_diagnostics, desc = "Workspace Diagnostics" },
-	{
-		keys = "<leader>cf",
-		func = function()
-			vim.lsp.buf.format({ async = true })
-			vim.notify("Code formatted", vim.log.levels.INFO, { title = "LSP Format" })
-		end,
-		desc = "Format buffer",
-	},
 }
+-- Note: goto (gd/gD/gR/gI/gy) is owned by Snacks pickers (lua/plugins/snacks.lua);
+-- formatting (<leader>cf) is owned by conform.nvim (lua/plugins/conform.lua).
 
 local completion = vim.g.completion_mode or "blink" -- or 'native'
 vim.api.nvim_create_autocmd("LspAttach", {

@@ -10,14 +10,13 @@ wk.add({
 	{ "<leader><tab>", group = "tabs" },
 	{ "<leader>c", group = "code" },
 	{ "<leader>d", group = "debug" },
-	{ "<leader>D", group = "Diffview", icon = { icon = "", color = "orange" } },
-	-- { "<leader>p", group = "Yanky", icon = { icon = "󰃮 ", color = "yellow" } },
 	{ "<leader>dp", group = "profiler" },
 	{ "<leader>f", group = "file/find" },
 	{ "<leader>g", group = "git" },
 	{ "<leader>gh", group = "hunks" },
 	{ "<leader>q", group = "quit/session" },
 	{ "<leader>s", group = "search" },
+	{ "<leader>t", group = "terminal" },
 	{ "<leader>u", group = "ui", icon = { icon = "󰙵 ", color = "cyan" } },
 	{ "<leader>x", group = "diagnostics/quickfix", icon = { icon = "󱖫 ", color = "green" } },
 	{ "[", group = "prev" },
@@ -72,23 +71,41 @@ wk.add({
 			end,
 			desc = "Copy relative file path",
 		},
-		{
-			"<leader>?",
-			function()
-				require("which-key").show({ global = false })
-			end,
-			desc = "Buffer Keymaps (which-key)",
-		},
-		{
-			"<c-w><space>",
-			function()
-				require("which-key").show({ keys = "<c-w>", loop = true })
-			end,
-			desc = "Window Hydra Mode (which-key)",
-		},
+	},
+	-- top-level singletons: concise labels + icons.
+	-- Icons reuse which-key's own Material Design glyphs (these render in this Nerd Font);
+	-- entries without an icon inherit a sensible one from which-key's keyword rules.
+	{ "<leader>/", desc = "Grep", icon = { icon = "󰛔 ", color = "blue" } },
+	{ "<leader><space>", desc = "Smart Find" },
+	{ "<leader>:", desc = "Command History" },
+	{ "<leader>,", desc = "Buffers", icon = { icon = "󰈔 ", color = "cyan" } },
+	{ "<leader>.", desc = "Scratch", icon = { icon = "󱥰 ", color = "purple" } },
+	{ "<leader>S", desc = "Scratch Select", icon = { icon = "󱥰 ", color = "purple" } },
+	{ "<leader>;", desc = "Symbols" },
+	{ "<leader>e", desc = "Explorer", icon = { icon = "󰓩 ", color = "orange" } },
+	{ "<leader>n", desc = "Notifications", icon = { icon = "󰵅 ", color = "blue" } },
+	{ "<leader>N", desc = "Neovim News", icon = { icon = "󰈸 ", color = "orange" } },
+	{ "<leader>z", desc = "Zen", icon = { icon = "󱅻 ", color = "cyan" } },
+	{ "<leader>Z", desc = "Zoom", icon = { icon = "󱅻 ", color = "cyan" } },
+	{ "<leader>`", desc = "Other Buffer", icon = { icon = "󰈔 ", color = "cyan" } },
+	{ "<leader>K", desc = "Keywordprg" },
+	{
+		"<leader>?",
+		function()
+			require("which-key").show({ global = false })
+		end,
+		desc = "Buffer Keymaps",
+		icon = { icon = "󰙵 ", color = "blue" },
+	},
+	{
+		"<c-w><space>",
+		function()
+			require("which-key").show({ keys = "<c-w>", loop = true })
+		end,
+		desc = "Window Hydra",
 	},
 	{
 		mode = { "n", "v" }, -- NORMAL and VISUAL mode
-		{ "<leader>W", "<cmd>w<cr>", desc = "Write" },
+		{ "<leader>W", "<cmd>w<cr>", desc = "Write", icon = { icon = "󰆓 ", color = "green" } },
 	},
 })

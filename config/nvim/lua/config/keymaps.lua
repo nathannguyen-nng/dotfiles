@@ -9,30 +9,26 @@ map({ "n", "v" }, "<space>", "<nop>", { silent = true })
 -- ═══════════════════════════════════════════════════════════
 
 -- Tab/Shift-Tab: Like browser tabs, feels natural
-map("n", "<Tab>", ":bnext<CR>", { desc = "Next buffer" })
-map("n", "<S-Tab>", ":bprevious<CR>", { desc = "Previous buffer" })
+map("n", "<Tab>", ":bnext<CR>", { desc = "Next Buffer" })
+map("n", "<S-Tab>", ":bprevious<CR>", { desc = "Prev Buffer" })
 
 -- Alternative buffer switching (vim-style)
-map("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
-map("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
+map("n", "<leader>bn", ":bnext<CR>", { desc = "Next Buffer" })
+map("n", "<leader>bp", ":bprevious<CR>", { desc = "Prev Buffer" })
 map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 
 -- Quick switch to last edited file (super useful!)
-map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
+map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Other Buffer" })
+map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Other Buffer" })
 
 -- ═══════════════════════════════════════════════════════════
 -- WINDOW MANAGEMENT (splitting and navigation)
 -- ═══════════════════════════════════════════════════════════
 
--- Move between windows with Ctrl+hjkl (like tmux)
-map("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true })
-map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
-map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
-map("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
+-- Note: window/pane navigation (<C-hjkl>) and resize (<A-hjkl>) are owned by tmux.nvim
 
 -- Resize windows with Ctrl+Shift+arrows (macOS friendly)
 map("n", "<C-S-Up>", "<cmd>resize +5<CR>", opts)
@@ -40,14 +36,12 @@ map("n", "<C-S-Down>", "<cmd>resize -5<CR>", opts)
 map("n", "<C-S-Left>", "<cmd>vertical resize -5<CR>", opts)
 map("n", "<C-S-Right>", "<cmd>vertical resize +5<CR>", opts)
 
--- Window splitting
+-- Window splitting (w = window)
+map("n", "<leader>ws", "<C-W>s", { desc = "Split Below", remap = true })
+map("n", "<leader>wv", "<C-W>v", { desc = "Split Right", remap = true })
 map("n", "<leader>ww", "<C-W>p", { desc = "Other Window", remap = true })
-map("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
-map("n", "<leader>w-", "<C-W>s", { desc = "Split Window Below", remap = true })
-map("n", "<leader>sh", "<C-W>s", { desc = "Split Window Below", remap = true })
-map("n", "<leader>w|", "<C-W>v", { desc = "Split Window Right", remap = true })
-map("n", "<leader>|", "<C-W>v", { desc = "Split Window Right", remap = true })
-map("n", "<leader>sv", "<C-W>v", { desc = "Split Window Right", remap = true })
+map("n", "<leader>wd", "<C-W>c", { desc = "Close Window", remap = true })
+map("n", "<leader>wo", "<C-W>o", { desc = "Close Other Windows", remap = true })
 
 -- ═══════════════════════════════════════════════════════════
 -- SMART LINE MOVEMENT (the VSCode experience)
@@ -59,33 +53,25 @@ map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr =
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 map({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
--- Move lines up/down (Alt+j/k like VSCode)
-map("n", "<A-j>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
-map("n", "<A-k>", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" })
-map("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", { desc = "Move Down" })
-map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move Up" })
-map("v", "<A-j>", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "Move Down" })
-map("v", "<A-k>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" })
+-- Move lines up/down with Alt+Arrows (Alt+hjkl is owned by tmux.nvim resize)
+map("n", "<A-Down>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
+map("n", "<A-Up>", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" })
+map("i", "<A-Down>", "<esc><cmd>m .+1<cr>==gi", { desc = "Move Down" })
+map("i", "<A-Up>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move Up" })
+map("v", "<A-Down>", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "Move Down" })
+map("v", "<A-Up>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" })
 
--- Alternative line movement (for terminals that don't support Alt)
+-- Move selected block up/down
 map("v", "J", ":move '>+1<CR>gv=gv", { desc = "Move Block Down" })
 map("v", "K", ":move '<-2<CR>gv=gv", { desc = "Move Block Up" })
-map("n", "<A-Down>", ":m .+1<CR>", opts)
-map("n", "<A-Up>", ":m .-2<CR>", opts)
-map("i", "<A-Down>", "<Esc>:m .+1<CR>==gi", opts)
-map("i", "<A-Up>", "<Esc>:m .-2<CR>==gi", opts)
-map("v", "<A-Down>", ":m '>+1<CR>gv=gv", opts)
-map("v", "<A-Up>", ":m '<-2<CR>gv=gv", opts)
 
 -- ═══════════════════════════════════════════════════════════
 -- SEARCH & NAVIGATION (ergonomic improvements)
 -- ═══════════════════════════════════════════════════════════
 
 -- Better line start/end (more comfortable than $ and ^)
-map("n", "gl", "$", { desc = "Go to end of line" })
-map("n", "gh", "^", { desc = "Go to start of line" })
-map("n", "<A-h>", "^", { desc = "Go to start of line", silent = true })
-map("n", "<A-l>", "$", { desc = "Go to end of line", silent = true })
+map("n", "gl", "$", { desc = "Line End" })
+map("n", "gh", "^", { desc = "Line Start" })
 
 -- Select all content
 map("n", "==", "gg<S-v>G")
@@ -212,19 +198,16 @@ map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 -- ═══════════════════════════════════════════════════════════
 
 -- Close all folds except current one (great for focus)
-map("n", "zv", "zMzvzz", { desc = "Close all folds except the current one" })
+map("n", "zv", "zMzvzz", { desc = "Focus Fold" })
 
 -- Smart fold navigation (closes current, opens next/previous)
-map("n", "zj", "zcjzOzz", { desc = "Close current fold when open. Always open next fold." })
-map("n", "zk", "zckzOzz", { desc = "Close current fold when open. Always open previous fold." })
+map("n", "zj", "zcjzOzz", { desc = "Next Fold" })
+map("n", "zk", "zckzOzz", { desc = "Prev Fold" })
 
 -- ═══════════════════════════════════════════════════════════
 -- UTILITY SHORTCUTS
 -- ═══════════════════════════════════════════════════════════
 
--- Toggle line wrapping
-map("n", "<leader>tw", "<cmd>set wrap!<CR>", { desc = "Toggle Wrap", silent = true })
-
 -- Fix spelling (picks first suggestion)
-map("n", "z0", "1z=", { desc = "Fix word under cursor" })
+map("n", "z0", "1z=", { desc = "Fix Word Under Cursor" })
 

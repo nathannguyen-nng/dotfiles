@@ -289,11 +289,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
 -- stylua: ignore start
 local   keymaps = {
     -- Top Pickers & Explorer
-    { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
+    { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find" },
     { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-    { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
-    { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+    { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notifications" },
+    { "<leader>e", function() Snacks.explorer() end, desc = "Explorer" },
     {
       "<leader>,", function()
         Snacks.picker.buffers({
@@ -324,18 +324,16 @@ local   keymaps = {
     { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
     { "<leader>gp", function() Snacks.picker.git_diff() end, desc = "Git Diff Picker (Hunks)" },
     { "<leader>gP", function() Snacks.picker.git_diff({ base = "origin" }) end, desc = "Git Diff Picker (origin)" },
-    { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
+    { "<leader>gH", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
     -- Grep
     { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
     { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" },
-    { "<leader>fs", function() Snacks.picker.grep() end, desc = "Find files containing string" },
     { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } },
     -- search
     { '<leader>s"', function() Snacks.picker.registers() end, desc = "Registers" },
     { '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" },
     { "<leader>sa", function() Snacks.picker.autocmds() end, desc = "Autocmds" },
-    { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
     { "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader>sC", function() Snacks.picker.commands() end, desc = "Commands" },
     { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics" },
@@ -352,11 +350,11 @@ local   keymaps = {
     { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
     { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
     -- LSP
-    { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
-    { "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
+    { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Definition" },
+    { "gD", function() Snacks.picker.lsp_declarations() end, desc = "Declaration" },
     { "gR", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
-    { "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
-    { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition" },
+    { "gI", function() Snacks.picker.lsp_implementations() end, desc = "Implementation" },
+    { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Type Definition" },
     { "<leader>ss", function() Snacks.picker.lsp_symbols() end, desc = "LSP Symbols" },
     { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols() end, desc = "LSP Workspace Symbols" },
     { "gai", function() Snacks.picker.lsp_incoming_calls() end, desc = "C[a]lls Incoming", has = "callHierarchy/incomingCalls" },
@@ -365,22 +363,22 @@ local   keymaps = {
     { "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete buffer", mode = { "n" }, },
     { "<leader>bo", function() Snacks.bufdelete.other() end, desc = "Delete other buffers", mode = { "n" }, },
     -- terminal
-    { "<leader>fT", function() Snacks.terminal() end, desc = "Terminal (cwd)", mode = "n", },
-    { "<leader>ft", function() Snacks.terminal(nil, { cwd = vim.fn.getcwd() }) end, desc = "Terminal (Root Dir)",  mode = "n", },
+    { "<leader>tt", function() Snacks.terminal(nil, { cwd = vim.fn.getcwd() }) end, desc = "Terminal (Root Dir)",  mode = "n", },
+    { "<leader>tT", function() Snacks.terminal() end, desc = "Terminal (cwd)", mode = "n", },
     { "<c-:>",  function() Snacks.terminal(nil, { cwd = vim.fn.getcwd() }) end, desc = "Terminal (Root Dir)", mode = "n", },
     { "<c-/>",      function() Snacks.terminal() end, desc = "Toggle Terminal" },
     { "<c-_>", function() Snacks.terminal(nil, { cwd = vim.fn.getcwd() }) end, desc = "which_key_ignore",  mode = "n", },
     -- Other
-    { "<leader>z",  function() Snacks.zen() end, desc = "Toggle Zen Mode" },
-    { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
-    { "<leader>.",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
-    { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
+    { "<leader>z",  function() Snacks.zen() end, desc = "Zen" },
+    { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Zoom" },
+    { "<leader>.",  function() Snacks.scratch() end, desc = "Scratch" },
+    { "<leader>S",  function() Snacks.scratch.select() end, desc = "Scratch Select" },
     { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File" },
     { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },
     { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
     { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
-    { "]]",         function() Snacks.words.jump(vim.v.count1) end, desc = "Next Reference", mode = { "n", "t" } },
-    { "[[",         function() Snacks.words.jump(-vim.v.count1) end, desc = "Prev Reference", mode = { "n", "t" } },
+    { "]r",         function() Snacks.words.jump(vim.v.count1) end, desc = "Next Reference", mode = { "n", "t" } },
+    { "[r",         function() Snacks.words.jump(-vim.v.count1) end, desc = "Prev Reference", mode = { "n", "t" } },
     {
       "<leader>N",
       desc = "Neovim News",
