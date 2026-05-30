@@ -148,6 +148,14 @@ Snacks.setup({
 				supports_live = true,
 				auto_close = false,
 				toggle = false,
+				win = {
+					list = {
+						number = false,
+						relativenumber = false,
+						signcolumn = "no",
+						colorcolumn = "",
+					},
+				},
 				layout = {
 					layout = {
 						position = "right",

@@ -2,6 +2,8 @@ local function augroup(name)
 	return vim.api.nvim_create_augroup("user_" .. name, { clear = true })
 end
 
+local sidebar_fts = { snacks_explorer = true, snacks_picker_list = true, snacks_picker_input = true }
+
 local _checktime_timer = nil
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
 	group = augroup("checktime"),
@@ -75,15 +77,19 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("InsertEnter", {
 	group = augroup("insert_ui_perf"),
 	callback = function()
+		local ft = vim.bo.filetype
+		if sidebar_fts[ft] then return end
 		vim.wo.cursorline = false
 		vim.wo.relativenumber = false
-		vim.wo.number = true -- keep absolute numbers
+		vim.wo.number = true
 	end,
 })
 
 vim.api.nvim_create_autocmd("InsertLeave", {
 	group = augroup("insert_ui_perf"),
 	callback = function()
+		local ft = vim.bo.filetype
+		if sidebar_fts[ft] then return end
 		vim.wo.cursorline = true
 		vim.wo.relativenumber = true
 	end,
@@ -200,23 +206,31 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	end,
 })
 
-local sidebar_fts = { snacks_explorer = true, snacks_picker_list = true, snacks_picker_input = true }
+-- Hide colorcolumn and line numbers in sidebar windows
+local function clean_sidebar_win(win)
+	win = win or 0
+	local buf = vim.api.nvim_win_get_buf(win)
+	local ft = vim.bo[buf].filetype
+	if sidebar_fts[ft] then
+		vim.wo[win].colorcolumn = ""
+		vim.wo[win].number = false
+		vim.wo[win].relativenumber = false
+		vim.wo[win].signcolumn = "no"
+	end
+end
 
--- Hide colorcolumn and other distracting UI in sidebar windows
-vim.api.nvim_create_autocmd("FileType", {
+vim.api.nvim_create_autocmd({ "FileType", "WinEnter", "BufWinEnter" }, {
 	group = augroup("sidebar_clean"),
-	pattern = { "snacks_explorer", "snacks_picker_list", "snacks_picker_input" },
 	callback = function()
-		vim.wo.colorcolumn = ""
-		vim.wo.number = false
-		vim.wo.relativenumber = false
-		vim.wo.signcolumn = "no"
+		clean_sidebar_win(0)
 	end,
 })
 
 local function only_sidebars_remain()
 	local real_wins = vim.tbl_filter(function(w)
-		if not vim.api.nvim_win_is_valid(w) then return false end
+		if not vim.api.nvim_win_is_valid(w) then
+			return false
+		end
 		local buf = vim.api.nvim_win_get_buf(w)
 		local ft = vim.bo[buf].filetype
 		return not sidebar_fts[ft]
@@ -229,7 +243,9 @@ vim.api.nvim_create_autocmd("WinClosed", {
 	group = augroup("quit_with_explorer"),
 	callback = function()
 		if only_sidebars_remain() then
-			vim.schedule(function() vim.cmd("qall") end)
+			vim.schedule(function()
+				vim.cmd("qall")
+			end)
 		end
 	end,
 })
@@ -246,5 +262,3 @@ vim.api.nvim_create_autocmd("QuitPre", {
 		end)
 	end,
 })
-
-

@@ -10,6 +10,10 @@
                     "javascript"
                 ],
                 "path": "./typescript.json"
+            },
+            {
+                "language": ["cpp", "c"],
+                "path": "./cpp.json"
             }
         ]
     }

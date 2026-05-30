@@ -4,14 +4,14 @@ vim.pack.add({
 
 local wk = require("which-key")
 wk.setup({
-	preset = "helix",
+	preset = "classic",
 })
 wk.add({
 	{ "<leader><tab>", group = "tabs" },
 	{ "<leader>c", group = "code" },
 	{ "<leader>d", group = "debug" },
 	{ "<leader>D", group = "Diffview", icon = { icon = "", color = "orange" } },
-	{ "<leader>p", group = "Yanky", icon = { icon = "󰃮 ", color = "yellow" } },
+	-- { "<leader>p", group = "Yanky", icon = { icon = "󰃮 ", color = "yellow" } },
 	{ "<leader>dp", group = "profiler" },
 	{ "<leader>f", group = "file/find" },
 	{ "<leader>g", group = "git" },
@@ -92,4 +92,3 @@ wk.add({
 		{ "<leader>W", "<cmd>w<cr>", desc = "Write" },
 	},
 })
-
