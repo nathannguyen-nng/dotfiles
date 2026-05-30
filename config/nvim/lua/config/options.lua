@@ -24,7 +24,7 @@ opt.incsearch = true -- Show matches as you type
 -- Visual settings
 opt.colorcolumn = "120" -- Ruler at 120 chars
 opt.termguicolors = true -- Enable 24-bit colors
-opt.signcolumn = "yes" -- Always show sign column
+opt.signcolumn = "yes:1" -- Always show sign column
 opt.showmatch = true -- Highlight matching brackets
 opt.matchtime = 2 -- How long to show matching bracket
 opt.cmdheight = 0 -- Command line height
@@ -72,6 +72,12 @@ opt.encoding = "UTF-8" -- Set encoding
 -- Folding settings
 opt.smoothscroll = false
 vim.wo.foldmethod = "manual"
+opt.foldcolumn = "1"
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+opt.foldenable = true
+opt.foldmethod = "expr"
+opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 opt.foldlevel = 99 -- Start with all folds open
 opt.formatoptions = "jcroqlnt" -- tcqj
 opt.nrformats = "unsigned"
@@ -150,4 +156,3 @@ vim.filetype.add({
 		["%.env%.[%w_.-]+"] = "dotenv",
 	},
 })
-
