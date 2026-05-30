@@ -105,9 +105,9 @@ vim.g.autoformat = true
 vim.g.trouble_lualine = true
 
 -- global floating window border (all vim.lsp, vim.diagnostic, etc.)
-opt.winborder = "rounded"
+opt.winborder = "single"
 -- completion popup menu border
-opt.pumborder = "rounded"
+opt.pumborder = "single"
 opt.messagesopt = "hit-enter,history:500,progress:c"
 opt.fillchars = {
 	foldopen = "",

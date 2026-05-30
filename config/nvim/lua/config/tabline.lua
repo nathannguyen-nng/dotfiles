@@ -11,8 +11,9 @@ local _tab_invalidate_events = {
 	"BufAdd",
 	"BufDelete",
 	"BufWipeout",
-	"BufFilePost", -- buffer renamed
+	"BufFilePost",    -- buffer renamed
 	"BufModifiedSet", -- modified flag changed (shows/hides the indicator)
+	"BufEnter",       -- recompute disambiguated names when switching
 }
 
 vim.api.nvim_create_autocmd(_tab_invalidate_events, {
@@ -25,12 +26,12 @@ vim.api.nvim_create_autocmd(_tab_invalidate_events, {
 function M.set_highlights()
 	local ok, cp = pcall(require, "catppuccin.palettes")
 	local p = ok and cp.get_palette() or {}
-	local bar_bg = p.surface0 or "#282C34"
-	vim.api.nvim_set_hl(0, "TabLineFill", { link = "Normal" })
-	vim.api.nvim_set_hl(0, "MyBufInactive", { fg = p.subtext0 or "#ABB2BF", bg = bar_bg })
-	vim.api.nvim_set_hl(0, "MyBufActive", { fg = p.text or "#ECEFF4", bg = p.surface2 or "#3E4451", bold = true })
-	vim.api.nvim_set_hl(0, "MyBufSeparator", { fg = p.mantle or "#21252B", bg = bar_bg })
-	vim.api.nvim_set_hl(0, "MyBufClose", { fg = p.red or "#BF616A", bg = p.surface2 or "#3E4451" })
+	vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
+	vim.api.nvim_set_hl(0, "MyBufInactive", { fg = p.subtext0 or "#ABB2BF", bg = "NONE" })
+	local active_bg = p.surface1 or "#3E4451"
+	vim.api.nvim_set_hl(0, "MyBufActive", { fg = p.text or "#ECEFF4", bg = active_bg, bold = true })
+	vim.api.nvim_set_hl(0, "MyBufSeparator", { fg = p.mantle or "#21252B", bg = "NONE" })
+	vim.api.nvim_set_hl(0, "MyBufClose", { fg = p.red or "#BF616A", bg = active_bg })
 end
 
 -- Safe devicons resolve (cached per render)
@@ -44,20 +45,51 @@ local function get_icon(filename, name)
 	return icon and (icon .. " ") or ""
 end
 
--- Extract parent folders + filename (e.g., "parent/config/tabline.lua")
-local function get_display_name(path)
-	if path == "" then
-		return NO_NAME
+-- Build a display name for each listed buffer, showing only enough path to disambiguate.
+-- Files with unique names show just the filename; duplicates get parent folders added
+-- one level at a time until they differ.
+local function build_display_names()
+	local bufs = vim.tbl_filter(function(b)
+		return vim.api.nvim_buf_is_loaded(b) and vim.bo[b].buflisted
+	end, vim.api.nvim_list_bufs())
+
+	-- Collect full paths and split into parts
+	local info = {} -- [bufnr] = { path, parts }
+	for _, b in ipairs(bufs) do
+		local path = vim.api.nvim_buf_get_name(b)
+		local parts = vim.split(path ~= "" and path or NO_NAME, "/", { plain = true })
+		info[b] = { path = path, parts = parts }
 	end
-	local parts = vim.split(path, "/", { plain = true })
-	if #parts == 1 then
-		return parts[1] -- Just filename if no parent
-	elseif #parts == 2 then
-		return parts[#parts - 1] .. "/" .. parts[#parts] -- parent/filename
-	else
-		-- Return "grandparent/parent/filename" (last 3 parts)
-		return parts[#parts - 2] .. "/" .. parts[#parts - 1] .. "/" .. parts[#parts]
+
+	-- For each buffer, find the minimum suffix (from the right) that makes it unique
+	local names = {} -- [bufnr] = display string
+	for _, b in ipairs(bufs) do
+		local my_parts = info[b].parts
+		local depth = 1 -- start with just filename
+		while depth <= #my_parts do
+			local candidate = table.concat(my_parts, "/", #my_parts - depth + 1)
+			local clash = false
+			for _, other in ipairs(bufs) do
+				if other ~= b then
+					local op = info[other].parts
+					local other_candidate = table.concat(op, "/", #op - depth + 1)
+					if candidate == other_candidate then
+						clash = true
+						break
+					end
+				end
+			end
+			if not clash then
+				names[b] = candidate
+				break
+			end
+			depth = depth + 1
+		end
+		if not names[b] then
+			names[b] = table.concat(my_parts, "/", math.max(1, #my_parts - 2))
+		end
 	end
+	return names
 end
 
 -- Click handlers (minwid = bufnr)
@@ -95,7 +127,7 @@ function _G.tabline_close_click(bufnr, clicks, button)
 end
 
 -- Render a single buffer chunk
-local function render_buf(bufnr, current)
+local function render_buf(bufnr, current, display_names)
 	if not vim.api.nvim_buf_is_loaded(bufnr) then
 		return ""
 	end
@@ -104,7 +136,7 @@ local function render_buf(bufnr, current)
 	end
 
 	local name = vim.api.nvim_buf_get_name(bufnr)
-	local display_name = get_display_name(name)
+	local display_name = display_names[bufnr] or vim.fn.fnamemodify(name, ":t") or NO_NAME
 	local filename = (name ~= "" and vim.fn.fnamemodify(name, ":t")) or NO_NAME
 	local icon = get_icon(filename, name)
 	local content = icon .. display_name
@@ -116,10 +148,10 @@ local function render_buf(bufnr, current)
 			content,
 			" %X",
 			"%" .. bufnr .. "@v:lua.tabline_close_click@",
-			"%#MyBufClose#",
+			"%#MyBufClose# ",
 			CLOSE,
-			"%X",
-			" %#MyBufSeparator#",
+			" %X",
+			"%#MyBufSeparator#",
 			SEP,
 		})
 	else
@@ -142,10 +174,11 @@ function _G.tabline()
 		return _tab_cache
 	end
 
+	local display_names = build_display_names()
 	local parts = {}
 	-- Iterate listed buffers in ascending handle order for stability
 	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-		local chunk = render_buf(bufnr, current)
+		local chunk = render_buf(bufnr, current, display_names)
 		if chunk ~= "" then
 			table.insert(parts, chunk)
 		end

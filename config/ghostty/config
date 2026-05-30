@@ -8,15 +8,15 @@ alpha-blending = native
 font-size = 18
 theme = light:"Catppuccin Latte",dark:"Catppuccin Frappe"
 window-theme = system
-background-opacity = 0.90
+background-opacity = 0.95
 background-blur-radius = 30
 shell-integration = zsh
 keybind = global:alt+space=toggle_quick_terminal
 window-inherit-working-directory = false
 window-padding-balance = true
-#window-padding-x = 0
-#window-padding-y = 0
 window-padding-color = extend
+window-padding-x = 0
+window-padding-y = 0
 window-width = 120
 window-height = 30
 

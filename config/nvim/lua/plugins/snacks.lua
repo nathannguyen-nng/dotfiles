@@ -34,10 +34,20 @@ Snacks.setup({
 	dim = { enabled = true },
 	explorer = { enabled = true, replace_netrw = true, trash = true },
 	image = { enabled = true },
-	indent = { enabled = true, char = "▏" },
+	indent = {
+		enabled = true,
+		indent = {
+			enabled = true,
+			char = "┆", -- dashed indent line
+		},
+	},
 	input = { enabled = true },
 	layout = { enabled = true },
-	notifier = { enabled = true },
+	notifier = {
+		enabled = true,
+		border = "single",
+		style = "fancy",
+	},
 	quickfile = { enabled = true },
 	scope = { enabled = true },
 	scratch = { enabled = true },
@@ -45,10 +55,15 @@ Snacks.setup({
 	statuscolumn = { enabled = true },
 	terminal = { enabled = true },
 	toggle = { enabled = true },
-	words = { enabled = false },
+	words = { enabled = true },
 	zen = { enabled = true },
 
 	picker = {
+		win = {
+			input = { border = "single" },
+			list = { border = "single" },
+			preview = { border = "single" },
+		},
 		sources = {
 			files = {
 				hidden = true,
@@ -154,14 +169,24 @@ Snacks.setup({
 						relativenumber = false,
 						signcolumn = "no",
 						colorcolumn = "",
+						keys = {
+							["<esc>"] = { function() end, mode = { "n" } },
+						},
+					},
+					input = {
+						keys = {
+							["<esc>"] = { "focus_list", mode = { "i", "n" } },
+						},
 					},
 				},
 				layout = {
+					auto_hide = { "input" },
 					layout = {
 						position = "right",
 						width = 30,
 					},
 				},
+				focus = "list",
 				diagnostics = true,
 				diagnostics_open = false,
 				focus = "list",

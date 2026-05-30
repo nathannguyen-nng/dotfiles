@@ -166,7 +166,7 @@ local function open()
 		width = W, height = H,
 		row = math.floor((rows - H) / 2),
 		col = math.floor((cols - W) / 2),
-		style = "minimal", border = "rounded",
+		style = "minimal", border = "single",
 		title = " vim.pack ", title_pos = "center",
 	})
 	vim.wo[state.winid].cursorline = true

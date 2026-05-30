@@ -1,6 +1,9 @@
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
+-- Prevent <space> from acting as a motion — ensures it always waits for which-key
+map({ "n", "v" }, "<space>", "<nop>", { silent = true })
+
 -- ═══════════════════════════════════════════════════════════
 -- BUFFER NAVIGATION (think browser tabs)
 -- ═══════════════════════════════════════════════════════════
