@@ -72,6 +72,10 @@
       "rev": "ad58747b955d0743ccfd56e97da1a4c1fac89f58",
       "src": "https://github.com/rachartier/tiny-cmdline.nvim"
     },
+    "tmux.nvim": {
+      "rev": "32ceaf2793582955ef9576809730878c4d2d9426",
+      "src": "https://github.com/aserowy/tmux.nvim"
+    },
     "vdiff.nvim": {
       "rev": "dda6959f0d73dee3989ff5340f8e46fc34cd2dd7",
       "src": "https://gitlab.com/tduyng/vdiff.nvim"

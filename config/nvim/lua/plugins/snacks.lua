@@ -170,7 +170,13 @@ Snacks.setup({
 						signcolumn = "no",
 						colorcolumn = "",
 						keys = {
+							-- pressing esc does not close explorer
 							["<esc>"] = { function() end, mode = { "n" } },
+							-- tmux-nvim navigation
+							["<C-h>"] = false,
+							["<C-j>"] = false,
+							["<C-k>"] = false,
+							["<C-l>"] = false,
 						},
 					},
 					input = {
