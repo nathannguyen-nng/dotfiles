@@ -105,6 +105,7 @@ vim.lsp.enable({
 	"stylua",
 	"taplo",
 	"ruff",
+	"ty",
 })
 
 -- Load Lsp on-demand, e.g: eslint is disable by default
