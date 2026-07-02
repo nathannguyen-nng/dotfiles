@@ -34,7 +34,8 @@ zstyle ':z4h:fzf-complete' recurse-dirs 'no'
 
 # Use system fzf for all z4h widgets instead of the bundled fzf 0.25.
 # It reads FZF_DEFAULT_OPTS_FILE, so the catppuccin theme in fzfrc applies.
-zstyle ':z4h:*' fzf-command fzf
+# Guarded so a fresh machine falls back to the bundled fzf until brew bundle runs.
+(( $+commands[fzf] )) && zstyle ':z4h:*' fzf-command fzf
 
 # File/dir preview in TAB completion. z4h feeds fzf "word\0display" lines,
 # so {1} is the candidate; non-file candidates get no preview.
