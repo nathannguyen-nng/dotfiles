@@ -127,3 +127,6 @@ end
 local notificationName = "AppleInterfaceThemeChangedNotification"
 local appearanceWatcher = hs.distributednotifications.new(updateThemes, notificationName, nil)
 appearanceWatcher:start()
+
+-- Sync once at startup: theme may have changed while the watcher wasn't running
+updateThemes()

@@ -85,6 +85,10 @@
       "rev": "32ceaf2793582955ef9576809730878c4d2d9426",
       "src": "https://github.com/aserowy/tmux.nvim"
     },
+    "trouble.nvim": {
+      "rev": "bd67efe408d4816e25e8491cc5ad4088e708a69a",
+      "src": "https://github.com/folke/trouble.nvim"
+    },
     "vdiff.nvim": {
       "rev": "dda6959f0d73dee3989ff5340f8e46fc34cd2dd7",
       "src": "https://gitlab.com/tduyng/vdiff.nvim"

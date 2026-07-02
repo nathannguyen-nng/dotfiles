@@ -1,74 +1,45 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_SRC="$DOTFILES_DIR/config"
 CONFIG_DEST="$HOME/.config"
 
-echo "🔗 Restoring symlinks from $CONFIG_SRC to $CONFIG_DEST..."
+# Symlink src -> dest, replacing an existing symlink but never a real file/dir.
+link() {
+  local src=$1 dest=$2
+  if [ ! -e "$src" ]; then
+    echo "⚠️  Missing source, skipping: $src"
+    return 0
+  fi
+  if [ -L "$dest" ]; then
+    rm "$dest"
+  elif [ -e "$dest" ]; then
+    echo "⚠️  Skipping existing non-symlink: $dest"
+    return 0
+  fi
+  ln -s "$src" "$dest"
+  echo "✅ Linked $dest → $src"
+}
 
-# Ensure ~/.config exists
+echo "🔗 Restoring symlinks from $CONFIG_SRC to $CONFIG_DEST..."
 mkdir -p "$CONFIG_DEST"
 
+# Dirs in config/ that should not be linked into ~/.config
+SKIP="ssh nvim_bak"
+
 for dir in "$CONFIG_SRC"/*/; do
-  [ -d "$dir" ] || continue # skip non-directories
-
   base=$(basename "$dir")
-  target="$CONFIG_DEST/$base"
-
-  if [ -L "$target" ]; then
-    echo "🧹 Removing existing symlink: $target"
-    rm "$target"
-  elif [ -e "$target" ]; then
-    echo "⚠️  Skipping existing non-symlink: $target"
-    continue
-  fi
-
-  ln -s "$dir" "$target"
-  echo "✅ Linked $target → $dir"
+  case " $SKIP " in *" $base "*) continue ;; esac
+  link "${dir%/}" "$CONFIG_DEST/$base"
 done
 
-echo "🔗 Linking zshrc → ~/.zshrc..."
+echo "🔗 Linking home dotfiles..."
+link "$CONFIG_SRC/zsh/zshrc" "$HOME/.zshrc"
+link "$CONFIG_SRC/hushlogin" "$HOME/.hushlogin"
 
-ZSHRC_SRC="$CONFIG_SRC/zsh/zshrc"
-ZSHRC_DEST="$HOME/.zshrc"
-
-if [ -L "$ZSHRC_DEST" ]; then
-  rm "$ZSHRC_DEST"
-elif [ -e "$ZSHRC_DEST" ]; then
-  echo "⚠️  ~/.zshrc already exists and is not a symlink. Skipping."
-else
-  ln -s "$ZSHRC_SRC" "$ZSHRC_DEST"
-  echo "✅ Linked ~/.zshrc → $ZSHRC_SRC"
-fi
-
-echo "🔗 Linking hushlogin → ~/.hushlogin..."
-
-HUSH_SRC="$CONFIG_SRC/hushlogin"
-HUSH_DEST="$HOME/.hushlogin"
-
-if [ -L "$HUSH_DEST" ]; then
-  rm "$HUSK_DEST"
-elif [ -e "$HUSH_DEST" ]; then
-  echo "⚠️  ~/.hushlogin already exists and is not a symlink. Skipping."
-else
-  ln -s "$HUSH_SRC" "$HUSH_DEST"
-  echo "✅ Linked ~/.hushlogin → $HUSH_SRC"
-fi
-
-echo "🔗 Linking ssh config → ~/.ssh/config..."
-
-SSH_SRC="$CONFIG_SRC/ssh/config"
-SSH_DEST="$HOME/.ssh/config"
-
-if [ -L "$SSH_DEST" ]; then
-  rm "$SSH_DEST"
-elif [ -e "$SSH" ]; then
-  echo "⚠️  ~/.ssh/config already exists and is not a symlink. Skipping."
-else
-  ln -s "$SSH_SRC" "$SSH_DEST"
-  echo "✅ Linked ~/.ssh/config → $SSH_SRC"
-fi
+mkdir -p "$HOME/.ssh"
+link "$CONFIG_SRC/ssh/config" "$HOME/.ssh/config"
 
 echo "🎉 All eligible configs restored."
