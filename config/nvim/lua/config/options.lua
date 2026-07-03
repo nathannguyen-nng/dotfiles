@@ -1,8 +1,13 @@
 local opt = vim.opt
 
+vim.g.python3_host_prog = vim.fn.expand("~/.virtualenvs/neovim/bin/python3")
+-- put the neovim venv's bin on PATH so tools like jupytext (invoked as a bare
+-- shell command by jupytext.nvim) are found regardless of the launching shell's PATH
+vim.env.PATH = vim.fn.expand("~/.virtualenvs/neovim/bin") .. ":" .. vim.env.PATH
+
 opt.number = true -- Line numbers
 opt.relativenumber = true -- Relative line numbers
-opt.cursorline = true -- Highlight current line
+opt.cursorline = false -- Highlight current line
 opt.wrap = false -- Don't wrap lines
 opt.scrolloff = 10 -- Keep 10 lines above/below cursor
 opt.sidescrolloff = 8 -- Keep 8 columns left/right of cursor

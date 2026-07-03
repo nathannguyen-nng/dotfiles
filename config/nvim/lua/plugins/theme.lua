@@ -72,6 +72,12 @@ require("catppuccin").setup({
 			BlinkCmpDocSeparator    = { fg = p.surface2, bg = "NONE" },
 			BlinkCmpSignatureHelp   = { link = "NormalFloat" },
 			BlinkCmpSignatureHelpBorder = { fg = p.surface2, bg = "NONE" },
+			-- render-markdown code cell border: draws the border glyph's color from this
+			-- group's `bg` field (see render-markdown's colors.bg_as_fg), not `fg`.
+			RenderMarkdownCodeBorder = { bg = p.surface0 },
+			-- catppuccin's default LineNr (surface1) is too low-contrast to read
+			-- comfortably for relative line numbers; bump it up a shade.
+			LineNr = { fg = p.overlay1 },
 		}
 	end,
 	default_integrations = true,

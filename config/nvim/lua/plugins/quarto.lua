@@ -40,3 +40,10 @@ vim.keymap.set("n", "<localleader>rl", runner.run_line, { desc = "run line", sil
 vim.keymap.set("n", "<localleader>RA", function()
 	runner.run_all(true)
 end, { desc = "run all cells of all languages", silent = true })
+
+vim.keymap.set("n", "<localleader>nc", function()
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	vim.api.nvim_buf_set_lines(0, row, row, false, { "```python", "", "```" })
+	vim.api.nvim_win_set_cursor(0, { row + 2, 0 })
+	vim.cmd("startinsert")
+end, { desc = "insert new code cell", silent = true })

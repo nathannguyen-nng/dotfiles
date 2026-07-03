@@ -52,11 +52,11 @@ local renderOpts = {
 		position = "left",
 		language_pad = 0,
 		language_name = true,
-		disable_background = { "diff" },
+		disable_background = true,
 		width = "full",
 		left_margin = 0,
-		left_pad = 0,
-		right_pad = 0,
+		left_pad = 1,
+		right_pad = 1,
 		min_width = 0,
 		border = "thin",
 		above = "▄",
@@ -219,4 +219,3 @@ vim.keymap.set("n", "<leader>cp", function()
 	vim.fn["mkdp#util#install"]()
 	vim.cmd("MarkdownPreviewToggle")
 end, { desc = "Markdown preview" })
-

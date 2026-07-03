@@ -79,7 +79,12 @@ map("n", "<A-a>", "ggVG", { noremap = true, silent = true, desc = "Select all" }
 
 -- Clear search highlighting
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
-map("n", "<leader>ur", "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>", { desc = "Redraw / Clear hlsearch / Diff Update" })
+map(
+	"n",
+	"<leader>ur",
+	"<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
+	{ desc = "Redraw / Clear hlsearch / Diff Update" }
+)
 
 -- Smart search navigation (n always goes forward, N always backward)
 
@@ -145,17 +150,17 @@ map("n", "gcO", "O<esc>Vcx<esc>gcc$a<bs>", { desc = "Add Comment Above" })
 
 -- Quickfix and location lists
 map("n", "<leader>xl", function()
-  local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen)
-  if not success and err then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
+	local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen)
+	if not success and err then
+		vim.notify(err, vim.log.levels.ERROR)
+	end
 end, { desc = "Location List" })
 
 map("n", "<leader>xq", function()
-  local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
-  if not success and err then
-    vim.notify(err, vim.log.levels.ERROR)
-  end
+	local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen)
+	if not success and err then
+		vim.notify(err, vim.log.levels.ERROR)
+	end
 end, { desc = "Quickfix List" })
 
 map("n", "[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
@@ -211,3 +216,26 @@ map("n", "zk", "zckzOzz", { desc = "Prev Fold" })
 -- Fix spelling (picks first suggestion)
 map("n", "z0", "1z=", { desc = "Fix Word Under Cursor" })
 
+-- ═══════════════════════════════════════════════════════════
+-- MOLTEN SHORTCUTS
+-- ═══════════════════════════════════════════════════════════
+
+map("n", "<localleader>ip", function()
+	local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+	if venv ~= nil then
+		-- in the form of /home/benlubas/.virtualenvs/VENV_NAME
+		venv = string.match(venv, "/.+/(.+)")
+		vim.cmd(("MoltenInit %s"):format(venv))
+	else
+		vim.cmd("MoltenInit python3")
+	end
+end, { desc = "Initialize Molten for python3", silent = true })
+
+map("n", "<localleader>e", ":MoltenEvaluateOperator<CR>", { desc = "evaluate operator", silent = true })
+map("n", "<localleader>os", ":noautocmd MoltenEnterOutput<CR>", { desc = "open output window", silent = true })
+map("n", "<localleader>rr", ":MoltenReevaluateCell<CR>", { desc = "re-eval cell", silent = true })
+map("v", "<localleader>r", ":<C-u>MoltenEvaluateVisual<CR>gv", { desc = "execute visual selection", silent = true })
+map("n", "<localleader>oh", ":MoltenHideOutput<CR>", { desc = "close output window", silent = true })
+map("n", "<localleader>md", ":MoltenDelete<CR>", { desc = "delete Molten cell", silent = true })
+map("n", "<localleader>mx", ":MoltenOpenInBrowser<CR>", { desc = "open output in browser", silent = true })
+map("n", "<localleader>mi", ":MoltenImagePopup<CR>", { desc = "open image output in Preview", silent = true })

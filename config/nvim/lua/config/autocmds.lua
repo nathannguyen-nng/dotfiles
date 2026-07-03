@@ -90,7 +90,6 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 	callback = function()
 		local ft = vim.bo.filetype
 		if sidebar_fts[ft] then return end
-		vim.wo.cursorline = true
 		vim.wo.relativenumber = true
 	end,
 })

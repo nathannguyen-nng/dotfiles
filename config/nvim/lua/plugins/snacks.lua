@@ -268,12 +268,19 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			Snacks.toggle.zoom():map("<leader>wm"):map("<leader>uZ")
 			Snacks.toggle.zen():map("<leader>uz")
 		end)
-		-- Open explorer on startup.
-		-- Skip if launched with a directory arg — replace_netrw already opened it,
-		-- and calling again would toggle it closed.
-		local is_dir = vim.fn.argc() > 0 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
-		if not is_dir then
+		-- Open explorer on startup. With no args, open focused. With a directory
+		-- arg, replace_netrw already opened and focused it above — calling again
+		-- here would just toggle it closed, so skip. With a file arg, open the
+		-- explorer unfocused (cursor stays in the file) and hide its search box
+		-- until the user actually focuses the explorer and wants to filter.
+		local is_dir_arg = vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1
+		if vim.fn.argc() == 0 then
 			Snacks.explorer()
+		elseif not is_dir_arg then
+			local picker = Snacks.explorer({ focus = false })
+			if picker then
+				picker:toggle("input", { enable = false })
+			end
 		end
 
 		-- Re-trigger indent attachment for buffers loaded before snacks was ready

@@ -4,7 +4,25 @@ vim.pack.add({
 })
 
 vim.g.molten_image_provider = "image.nvim"
-vim.g.molten_output_win_max_height = 20
+vim.g.molten_output_win_max_height = 30
+
+-- molten-nvim's bundled comment-stripping helper (used by :MoltenExportOutput to compare
+-- cell contents) can hit a treesitter `#offset!` match whose metadata has no `.range` on
+-- current Neovim, crashing the export (and, via jupytext.nvim, any save of the linked .md).
+-- Patch it to fall back to the untouched text instead of throwing.
+do
+	local ok, remove_comments = pcall(require, "remove_comments")
+	if ok then
+		local original = remove_comments.remove_comments
+		remove_comments.remove_comments = function(str, lang)
+			local call_ok, result = pcall(original, str, lang)
+			if call_ok then
+				return result
+			end
+			return str
+		end
+	end
+end
 
 -- I find auto open annoying, keep in mind setting this option will require setting
 -- a keybind for `:noautocmd MoltenEnterOutput` to open the output again
@@ -29,7 +47,7 @@ require("image").setup({
 		},
 	},
 	max_width = 100,
-	max_height = 12,
+	max_height = 30,
 	max_height_window_percentage = math.huge,
 	max_width_window_percentage = math.huge,
 	window_overlap_clear_enabled = true,
@@ -114,6 +132,104 @@ vim.api.nvim_create_autocmd("BufEnter", {
 			vim.g.molten_virt_lines_off_by_1 = true
 			vim.g.molten_virt_text_output = true
 		end
+	end,
+})
+
+-- `ty` (our python LSP, see lsp/ty.lua) only auto-discovers real virtualenvs (it looks
+-- for VIRTUAL_ENV + a pyvenv.cfg); conda envs don't have pyvenv.cfg so it silently falls
+-- back to scanning system Pythons. ty *does* support pointing explicitly at a non-venv
+-- (e.g. conda) environment via `environment.python` in a project-local ty.toml, so we
+-- write that file to match Molten's active kernel and restart the ty client to pick it up.
+local ty_root_markers = { "ty.toml", "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git" }
+local molten_managed_marker = "# molten-managed: kernel env synced from MoltenInit"
+
+local function write_ty_env_config(root, venv_dir)
+	local path = root .. "/ty.toml"
+	if vim.fn.filereadable(path) == 1 then
+		local existing = io.open(path, "r")
+		local contents = existing:read("a")
+		existing:close()
+		if not contents:find(molten_managed_marker, 1, true) then
+			return false -- user-authored ty.toml; don't clobber it
+		end
+	end
+	local f = io.open(path, "w")
+	if not f then
+		return false
+	end
+	f:write(molten_managed_marker .. "\n[environment]\npython = " .. string.format("%q", venv_dir) .. "\n")
+	f:close()
+	return true
+end
+
+local function sync_ty_to_molten_kernel()
+	local ok, kernel_ids = pcall(vim.fn.MoltenRunningKernels, { true })
+	if not ok or not kernel_ids or #kernel_ids == 0 then
+		return
+	end
+	-- kernel_id is kernel_name, or kernel_name_N if multiple instances of the same kernel
+	-- are running; strip the suffix to get back the underlying jupyter kernel name.
+	local kernel_name = kernel_ids[1]:gsub("_%d+$", "")
+	local kernel_json = vim.fn.expand("~/Library/Jupyter/kernels/" .. kernel_name .. "/kernel.json")
+	local f = io.open(kernel_json, "r")
+	if not f then
+		return
+	end
+	local ok2, spec = pcall(vim.json.decode, f:read("a"))
+	f:close()
+	if not ok2 or not spec.argv or not spec.argv[1] then
+		return
+	end
+	-- python_path looks like <env>/bin/python3
+	local venv_dir = spec.argv[1]:match("(.+)/bin/[^/]+$")
+	if not venv_dir then
+		return
+	end
+
+	-- ty falls back to the file's own directory as a single-file root when no
+	-- marker is found upward (e.g. scratch notebooks outside any git repo);
+	-- match that behavior so we write ty.toml where ty will actually look for it.
+	local root = vim.fs.root(0, ty_root_markers) or vim.fs.dirname(vim.api.nvim_buf_get_name(0))
+	if not root then
+		return
+	end
+
+	if vim.b.molten_ty_venv == venv_dir then
+		return -- this buffer's root is already synced to this kernel's env
+	end
+
+	if not write_ty_env_config(root, venv_dir) then
+		vim.notify(
+			"ty.toml already exists at " .. root .. " and isn't molten-managed; skipping kernel sync",
+			vim.log.levels.WARN
+		)
+		return
+	end
+	vim.b.molten_ty_venv = venv_dir
+
+	for _, client in ipairs(vim.lsp.get_clients({ name = "ty" })) do
+		local bufs = vim.tbl_keys(client.attached_buffers)
+		local restart_bufs = vim.tbl_filter(function(buf)
+			local buf_root = vim.fs.root(buf, ty_root_markers) or vim.fs.dirname(vim.api.nvim_buf_get_name(buf))
+			return buf_root == root
+		end, bufs)
+		if #restart_bufs > 0 then
+			client:stop()
+			vim.schedule(function()
+				for _, buf in ipairs(restart_bufs) do
+					if vim.api.nvim_buf_is_valid(buf) then
+						vim.lsp.start(vim.lsp.config.ty, { bufnr = buf })
+					end
+				end
+			end)
+		end
+	end
+end
+
+vim.api.nvim_create_autocmd("User", {
+	pattern = "MoltenInitPost",
+	callback = function()
+		vim.schedule(sync_ty_to_molten_kernel)
 	end,
 })
 
