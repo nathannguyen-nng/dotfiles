@@ -180,3 +180,24 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 
+-- Code-cell text object (fenced code blocks) for markdown/quarto notebooks,
+-- scoped to those filetypes so it doesn't shadow the builtin ib/ab block objects.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "markdown", "quarto" },
+	callback = function(event)
+		local buf = event.buf
+		vim.keymap.set({ "x", "o" }, "ib", function()
+			sel.select_textobject("@code_cell.inner", "textobjects")
+		end, { buffer = buf, desc = "Select in code cell" })
+		vim.keymap.set({ "x", "o" }, "ab", function()
+			sel.select_textobject("@code_cell.outer", "textobjects")
+		end, { buffer = buf, desc = "Select around code cell" })
+		vim.keymap.set({ "n", "x", "o" }, "]b", function()
+			mv.goto_next_start("@code_cell.inner", "textobjects")
+		end, { buffer = buf, desc = "Next code cell" })
+		vim.keymap.set({ "n", "x", "o" }, "[b", function()
+			mv.goto_previous_start("@code_cell.inner", "textobjects")
+		end, { buffer = buf, desc = "Previous code cell" })
+	end,
+})
+

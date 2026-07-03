@@ -30,9 +30,22 @@
       "src": "https://github.com/ThePrimeagen/harpoon",
       "version": "'harpoon2'"
     },
+    "image.nvim": {
+      "rev": "88351f1f7d9dbae286e671ce3690a49660dd8a5c",
+      "src": "https://github.com/3rd/image.nvim"
+    },
+    "jupytext.nvim": {
+      "rev": "c8baf3ad344c59b3abd461ecc17fc16ec44d0f7b",
+      "src": "https://github.com/GCBallesteros/jupytext.nvim"
+    },
     "markdown-preview.nvim": {
       "rev": "a923f5fc5ba36a3b17e289dc35dc17f66d0548ee",
       "src": "https://github.com/iamcco/markdown-preview.nvim"
+    },
+    "molten-nvim": {
+      "rev": "a286aa914d9a154bc359131aab788b5a077a5a99",
+      "src": "https://github.com/benlubas/molten-nvim",
+      "version": "'v1.9.2'"
     },
     "nvim-dap": {
       "rev": "b516f20b487b0ac6a281e376dfac1d16b5040041",
@@ -53,8 +66,7 @@
     },
     "nvim-treesitter": {
       "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
-      "src": "https://github.com/nvim-treesitter/nvim-treesitter",
-      "version": "'main'"
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
     "nvim-treesitter-textobjects": {
       "rev": "851e865342e5a4cb1ae23d31caf6e991e1c99f1e",
@@ -65,9 +77,17 @@
       "rev": "dfbfaa967a6f7ec50789bead7ef87e336c1fa63c",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
     },
+    "otter.nvim": {
+      "rev": "d781eda3bc18dbc8677f9a24abdc705fb74e4428",
+      "src": "https://github.com/jmbuhr/otter.nvim"
+    },
     "plenary.nvim": {
       "rev": "74b06c6c75e4eeb3108ec01852001636d85a932b",
       "src": "https://github.com/nvim-lua/plenary.nvim"
+    },
+    "quarto-nvim": {
+      "rev": "17f1e5d664bc615478230dc0240666329efacf9b",
+      "src": "https://github.com/quarto-dev/quarto-nvim"
     },
     "render-markdown.nvim": {
       "rev": "5adf0895310c1904e5abfaad40a2baad7fe44a07",
