@@ -22,14 +22,12 @@ total=$((running + waiting + error + idle))
 
 if [ "$total" -eq 0 ]; then
     echo ""
-elif [ "$running" -eq 0 ] && [ "$waiting" -eq 0 ] && [ "$error" -eq 0 ] && [ "$idle" -gt 0 ]; then
-    echo "#[fg=green,bold]✓ all ready#[default]"
 else
-    parts=()
-    [ "$running" -gt 0 ] && parts+=("#[fg=yellow,bold]⚡ ${running} running#[default]")
-    [ "$waiting" -gt 0 ] && parts+=("#[fg=cyan,bold]⏸ ${waiting} waiting#[default]")
-    [ "$error" -gt 0 ] && parts+=("#[fg=red,bold]✗ ${error} error#[default]")
-    [ "$idle" -gt 0 ] && parts+=("#[fg=green]✓ ${idle} ready#[default]")
+    # Nerd Font icons (not emoji) for consistent single-cell width -- emoji
+    # like ⚡/⏸/✓ render at inconsistent widths depending on terminal/font,
+    # which throws off the spacing between segments.
+    parts=("#[fg=yellow,bold] ${running}#[default]" "#[fg=cyan,bold] ${waiting}#[default]" "#[fg=green,bold] ${idle}#[default]")
+    [ "$error" -gt 0 ] && parts+=("#[fg=red,bold] ${error}#[default]")
 
     IFS=' '
     echo "${parts[*]}"
