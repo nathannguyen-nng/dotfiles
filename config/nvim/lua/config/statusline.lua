@@ -42,6 +42,9 @@ local function apply_highlights()
 	hl("StatusInfoIcon",  { bg = bar_bg, fg = p.blue })
 	hl("StatusHintIcon",  { bg = bar_bg, fg = p.teal })
 
+	-- Molten (jupyter kernel)
+	hl("StatusMolten", { bg = bar_bg, fg = p.sapphire, bold = true })
+
 	-- Right side items
 	hl("StatusMeta",     { bg = bar_bg, fg = bar_fg })
 	hl("StatusFiletype", { bg = bar_bg, fg = p.text })
@@ -75,6 +78,7 @@ local icons = {
 	warn   = vim.fn.nr2char(0xF529), --
 	info   = vim.fn.nr2char(0xF449), --
 	hint   = vim.fn.nr2char(0xF835), --
+	molten = vim.fn.nr2char(0xE606), --  (jupyter)
 }
 
 -- Diagnostics cache
@@ -145,6 +149,27 @@ local function get_diagnostics()
 	return table.concat(parts, " ") .. "%#StatusLine#"
 end
 
+-- Filetypes molten-nvim is configured for (see plugins/molten.lua); .ipynb
+-- buffers keep their `.ipynb` name even after jupytext converts the filetype,
+-- so also match on the buffer name.
+local molten_fts = { python = true, quarto = true, markdown = true }
+
+local function is_molten_supported()
+	if molten_fts[vim.bo.filetype] then return true end
+	return vim.api.nvim_buf_get_name(0):match("%.ipynb$") ~= nil
+end
+
+local function get_molten_status()
+	if not is_molten_supported() then return "" end
+	local ok, status = pcall(require, "molten.status")
+	if not ok then return "" end
+	local ok2, init = pcall(status.initialized)
+	if not ok2 or init ~= "Molten" then return "" end
+	local ok3, kernels = pcall(status.kernels)
+	if not ok3 or kernels == "" then return "" end
+	return "%#StatusMolten#" .. icons.molten .. " " .. kernels .. "%#StatusLine#"
+end
+
 local mode_labels = {
 	n       = "NORMAL",
 	c       = "COMMAND",
@@ -203,6 +228,12 @@ function M.build()
 		st = st .. di .. " "
 	end
 
+	-- E: molten kernel status (only in molten-supported files, when initialized)
+	local mo = get_molten_status()
+	if mo ~= "" then
+		st = st .. mo .. " "
+	end
+
 	-- right align
 	st = st .. "%="
 
@@ -244,7 +275,7 @@ vim.o.statusline = "%!v:lua.require('config.statusline').build()"
 
 vim.api.nvim_create_autocmd("ModeChanged", {
 	pattern = "*",
-	callback = function() vim.cmd.redrawstatus() end,
+	callback = function() vim.schedule(vim.cmd.redrawstatus) end,
 })
 
 return M

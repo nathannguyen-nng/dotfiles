@@ -27,7 +27,7 @@ echo "🔗 Restoring symlinks from $CONFIG_SRC to $CONFIG_DEST..."
 mkdir -p "$CONFIG_DEST"
 
 # Dirs in config/ that should not be linked into ~/.config
-SKIP="ssh nvim_bak"
+SKIP="ssh nvim_bak launchd"
 
 for dir in "$CONFIG_SRC"/*/; do
   base=$(basename "$dir")
@@ -41,5 +41,18 @@ link "$CONFIG_SRC/hushlogin" "$HOME/.hushlogin"
 
 mkdir -p "$HOME/.ssh"
 link "$CONFIG_SRC/ssh/config" "$HOME/.ssh/config"
+
+echo "🔗 Linking LaunchAgents..."
+mkdir -p "$HOME/Library/LaunchAgents"
+for plist in "$CONFIG_SRC"/launchd/*.plist; do
+  [ -e "$plist" ] || continue
+  base=$(basename "$plist")
+  dest="$HOME/Library/LaunchAgents/$base"
+  link "$plist" "$dest"
+  label="${base%.plist}"
+  if ! launchctl print "gui/$(id -u)/$label" >/dev/null 2>&1; then
+    launchctl bootstrap "gui/$(id -u)" "$dest" && echo "✅ Bootstrapped $label"
+  fi
+done
 
 echo "🎉 All eligible configs restored."

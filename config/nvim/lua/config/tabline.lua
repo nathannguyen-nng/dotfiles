@@ -27,11 +27,11 @@ function M.set_highlights()
 	local ok, cp = pcall(require, "catppuccin.palettes")
 	local p = ok and cp.get_palette() or {}
 	vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
-	vim.api.nvim_set_hl(0, "MyBufInactive", { fg = p.subtext0 or "#ABB2BF", bg = "NONE" })
-	local active_bg = p.surface1 or "#3E4451"
-	vim.api.nvim_set_hl(0, "MyBufActive", { fg = p.text or "#ECEFF4", bg = active_bg, bold = true })
+	local inactive_bg = p.surface1 or "#3E4451"
+	vim.api.nvim_set_hl(0, "MyBufInactive", { fg = p.subtext0 or "#ABB2BF", bg = inactive_bg })
+	vim.api.nvim_set_hl(0, "MyBufActive", { fg = p.text or "#ECEFF4", bg = "NONE", bold = true })
 	vim.api.nvim_set_hl(0, "MyBufSeparator", { fg = p.mantle or "#21252B", bg = "NONE" })
-	vim.api.nvim_set_hl(0, "MyBufClose", { fg = p.red or "#BF616A", bg = active_bg })
+	vim.api.nvim_set_hl(0, "MyBufClose", { fg = p.red or "#BF616A", bg = "NONE" })
 end
 
 -- Safe devicons resolve (cached per render)

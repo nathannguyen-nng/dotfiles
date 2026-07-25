@@ -8,7 +8,13 @@ require("vim._core.ui2").enable({
 		---cmdline or in a separate ephemeral message window.
 		---@type string|table<string, 'cmd'|'msg'|'pager'> Default message target
 		---or table mapping |ui-messages| kinds and triggers to a target.
-		targets = "msg",
+		target = "msg", -- Default target for kinds not listed in `targets` below.
+		targets = {
+			emsg = "cmd", -- Errors (internal error, :throw, …)
+			echoerr = "cmd", -- :echoerr message
+			lua_error = "cmd", -- Error in :lua code
+			rpc_error = "cmd", -- Error response from rpcrequest()
+		},
 		cmd = { -- Options related to messages in the cmdline window.
 			height = 0.5, -- Maximum height while expanded for messages beyond 'cmdheight'.
 		},

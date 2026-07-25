@@ -72,12 +72,29 @@ require("catppuccin").setup({
 			BlinkCmpDocSeparator    = { fg = p.surface2, bg = "NONE" },
 			BlinkCmpSignatureHelp   = { link = "NormalFloat" },
 			BlinkCmpSignatureHelpBorder = { fg = p.surface2, bg = "NONE" },
+			-- tiny-cmdline: centered floating cmdline window
+			TinyCmdlineNormal       = { link = "NormalFloat" },
+			TinyCmdlineBorder       = { fg = p.surface2, bg = "NONE" },
+			-- snacks notifier: popup notification windows
+			SnacksNotifierInfo        = { fg = p.blue, bg = "NONE" },
+			SnacksNotifierWarn        = { fg = p.yellow, bg = "NONE" },
+			SnacksNotifierError       = { fg = p.red, bg = "NONE" },
+			SnacksNotifierDebug       = { fg = p.peach, bg = "NONE" },
+			SnacksNotifierTrace       = { fg = p.rosewater, bg = "NONE" },
+			SnacksNotifierBorderInfo  = { fg = p.blue, bg = "NONE" },
+			SnacksNotifierBorderWarn  = { fg = p.yellow, bg = "NONE" },
+			SnacksNotifierBorderError = { fg = p.red, bg = "NONE" },
+			SnacksNotifierBorderDebug = { fg = p.peach, bg = "NONE" },
+			SnacksNotifierBorderTrace = { fg = p.rosewater, bg = "NONE" },
 			-- render-markdown code cell border: draws the border glyph's color from this
 			-- group's `bg` field (see render-markdown's colors.bg_as_fg), not `fg`.
 			RenderMarkdownCodeBorder = { bg = p.surface0 },
 			-- catppuccin's default LineNr (surface1) is too low-contrast to read
 			-- comfortably for relative line numbers; bump it up a shade.
 			LineNr = { fg = p.overlay1 },
+			-- molten-nvim links this to CursorLine by default, which paints the whole
+			-- active cell's background whenever the cursor moves into it. Disable it.
+			MoltenCell = {},
 		}
 	end,
 	default_integrations = true,

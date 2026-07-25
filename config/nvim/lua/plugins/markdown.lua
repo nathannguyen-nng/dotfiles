@@ -4,6 +4,7 @@ vim.pack.add({
 })
 
 local renderOpts = {
+	file_types = { "markdown", "quarto" },
 	heading = {
 		enabled = true,
 		render_modes = true,
@@ -52,7 +53,7 @@ local renderOpts = {
 		position = "left",
 		language_pad = 0,
 		language_name = true,
-		disable_background = true,
+		disable_background = false,
 		width = "full",
 		left_margin = 0,
 		left_pad = 1,

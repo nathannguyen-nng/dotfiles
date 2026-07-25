@@ -10,7 +10,8 @@ PINNED=(
   config/ghostty/config
   config/nvim/init.lua
   config/tmux/tmux.conf
-  config/sketchybar/sketchybarrc
+  config/herdr/config.toml
+  config/yazi/
   config/hammerspoon/init.lua
 )
 

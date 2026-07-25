@@ -169,6 +169,23 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 	end,
 })
 
+-- Notebooks are Python: 4-space indent. jupytext.nvim reads *.ipynb via
+-- BufReadCmd (bypassing BufRead/BufReadPost) and force-sets filetype=markdown
+-- (see plugins/jupytext.lua force_ft), so hook FileType and check the filename.
+-- .qmd files get filetype=quarto directly and get the same treatment so
+-- Python code cells match notebook indent.
+vim.api.nvim_create_autocmd("FileType", {
+	group = augroup("ipynb_indent"),
+	pattern = { "markdown", "quarto" },
+	callback = function(event)
+		if vim.endswith(event.file, ".ipynb") or vim.endswith(event.file, ".qmd") then
+			vim.opt_local.tabstop = 4
+			vim.opt_local.shiftwidth = 4
+			vim.opt_local.softtabstop = 4
+		end
+	end,
+})
+
 -- Set filetype for .env and .env.* files
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	group = augroup("env_filetype"),

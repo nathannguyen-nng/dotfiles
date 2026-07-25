@@ -4,7 +4,29 @@ vim.pack.add({
 })
 
 vim.g.molten_image_provider = "image.nvim"
-vim.g.molten_output_win_max_height = 30
+vim.g.molten_output_win_max_height = 100
+
+-- Default is "open_then_enter": the first <localleader>os press only opens the
+-- output window, the cursor stays in the code cell. Scrolling then moves the
+-- cursor in the cell instead, which walks it out of the cell's range and molten
+-- hides the window. Enter (focus) the floating window on the first press instead,
+-- so j/k/<C-d>/<C-u> etc scroll it directly; leave with <C-w>w or :q.
+vim.g.molten_enter_output_behavior = "open_and_enter"
+
+-- The output window is a regular buffer/window, not a special popup, so `q`
+-- doesn't close it by default -- only `:q` or :MoltenHideOutput do. Wire it
+-- up too once focused inside it.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "molten_output",
+	callback = function(e)
+		vim.keymap.set(
+			"n",
+			"q",
+			":MoltenHideOutput<CR>",
+			{ buffer = e.buf, silent = true, desc = "close output window" }
+		)
+	end,
+})
 
 -- molten-nvim's bundled comment-stripping helper (used by :MoltenExportOutput to compare
 -- cell contents) can hit a treesitter `#offset!` match whose metadata has no `.range` on
@@ -46,34 +68,51 @@ require("image").setup({
 			enabled = true,
 		},
 	},
+	-- molten-nvim sizes its floating output window from image.nvim's *absolute* max_width/
+	-- max_height (in terminal cells), NOT the percentage options below -- its image_size()
+	-- helper says so explicitly. Without these set, molten sizes the window to the image's
+	-- true (uncapped) dimensions, then clamps the window to whatever screen space is left,
+	-- so image.nvim ends up cropping the image to fit instead of scaling it down. Setting
+	-- these lets molten pick a window size the image can actually render into untouched.
 	max_width = 100,
-	max_height = 30,
-	max_height_window_percentage = math.huge,
-	max_width_window_percentage = math.huge,
+	max_height = 40,
+	max_height_window_percentage = 95,
+	max_width_window_percentage = 95,
 	window_overlap_clear_enabled = true,
 	window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+	tmux_show_only_in_active_window = true,
 })
+
+-- Auto-init a kernel: try the notebook's own kernelspec metadata first, then
+-- fall back to whatever venv/conda env is active. Returns true if a kernel
+-- was found and MoltenInit was called (so the caller can decide what to do
+-- if not, e.g. prompt the user).
+local function molten_auto_init(e)
+	local kernels = vim.fn.MoltenAvailableKernels()
+	local try_kernel_name = function()
+		local metadata = vim.json.decode(io.open(e.file, "r"):read("a"))["metadata"]
+		return metadata.kernelspec.name
+	end
+	local ok, kernel_name = pcall(try_kernel_name)
+	if not ok or not vim.tbl_contains(kernels, kernel_name) then
+		kernel_name = nil
+		local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+		if venv ~= nil then
+			kernel_name = string.match(venv, "/.+/(.+)")
+		end
+	end
+	if kernel_name ~= nil and vim.tbl_contains(kernels, kernel_name) then
+		vim.cmd(("MoltenInit %s"):format(kernel_name))
+		return true
+	end
+	return false
+end
 
 -- Auto-init a kernel and import existing outputs when opening a .ipynb,
 -- and export outputs back into the notebook on save.
 local function molten_import(e)
 	vim.schedule(function()
-		local kernels = vim.fn.MoltenAvailableKernels()
-		local try_kernel_name = function()
-			local metadata = vim.json.decode(io.open(e.file, "r"):read("a"))["metadata"]
-			return metadata.kernelspec.name
-		end
-		local ok, kernel_name = pcall(try_kernel_name)
-		if not ok or not vim.tbl_contains(kernels, kernel_name) then
-			kernel_name = nil
-			local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
-			if venv ~= nil then
-				kernel_name = string.match(venv, "/.+/(.+)")
-			end
-		end
-		if kernel_name ~= nil and vim.tbl_contains(kernels, kernel_name) then
-			vim.cmd(("MoltenInit %s"):format(kernel_name))
-		end
+		molten_auto_init(e)
 		vim.cmd("MoltenImportOutput")
 	end)
 end
@@ -88,6 +127,42 @@ vim.api.nvim_create_autocmd("BufEnter", {
 	callback = function(e)
 		if vim.api.nvim_get_vvar("vim_did_enter") ~= 1 then
 			molten_import(e)
+		end
+	end,
+})
+
+-- Same kernel auto-detection for .qmd, minus the .ipynb-specific output
+-- import/export (there's no embedded output JSON to import from). No
+-- kernelspec metadata to read either, so this only tries the active venv/
+-- conda env; if that fails to match a kernel, Molten's own MoltenInit prompt
+-- (triggered manually, e.g. via keymap) will ask you to pick one.
+-- Plain .md is excluded: most .md files aren't notebook-linked, so we don't
+-- want every markdown file to prompt for a kernel.
+local function molten_auto_init_plaintext(e)
+	vim.schedule(function()
+		local kernels = vim.fn.MoltenAvailableKernels()
+		local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+		local kernel_name = venv ~= nil and string.match(venv, "/.+/(.+)") or nil
+		if kernel_name ~= nil and vim.tbl_contains(kernels, kernel_name) then
+			vim.cmd(("MoltenInit %s"):format(kernel_name))
+		else
+			-- no confident match: fall back to Molten's own kernel-picker
+			-- prompt (same one `:MoltenInit` with no args shows you)
+			vim.cmd("MoltenInit")
+		end
+	end)
+end
+
+vim.api.nvim_create_autocmd("BufAdd", {
+	pattern = { "*.qmd" },
+	callback = molten_auto_init_plaintext,
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+	pattern = { "*.qmd" },
+	callback = function(e)
+		if vim.api.nvim_get_vvar("vim_did_enter") ~= 1 then
+			molten_auto_init_plaintext(e)
 		end
 	end,
 })
@@ -135,34 +210,13 @@ vim.api.nvim_create_autocmd("BufEnter", {
 	end,
 })
 
--- `ty` (our python LSP, see lsp/ty.lua) only auto-discovers real virtualenvs (it looks
--- for VIRTUAL_ENV + a pyvenv.cfg); conda envs don't have pyvenv.cfg so it silently falls
--- back to scanning system Pythons. ty *does* support pointing explicitly at a non-venv
--- (e.g. conda) environment via `environment.python` in a project-local ty.toml, so we
--- write that file to match Molten's active kernel and restart the ty client to pick it up.
-local ty_root_markers = { "ty.toml", "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", ".git" }
-local molten_managed_marker = "# molten-managed: kernel env synced from MoltenInit"
-
-local function write_ty_env_config(root, venv_dir)
-	local path = root .. "/ty.toml"
-	if vim.fn.filereadable(path) == 1 then
-		local existing = io.open(path, "r")
-		local contents = existing:read("a")
-		existing:close()
-		if not contents:find(molten_managed_marker, 1, true) then
-			return false -- user-authored ty.toml; don't clobber it
-		end
-	end
-	local f = io.open(path, "w")
-	if not f then
-		return false
-	end
-	f:write(molten_managed_marker .. "\n[environment]\npython = " .. string.format("%q", venv_dir) .. "\n")
-	f:close()
-	return true
-end
-
-local function sync_ty_to_molten_kernel()
+-- `basedpyright` (our python LSP, see lsp/basedpyright.lua) doesn't know which
+-- interpreter/env a given Molten kernel is using, so on every kernel attach we push
+-- the kernel's python executable into the attached basedpyright client(s) via
+-- workspace/didChangeConfiguration -- same mechanism as :LspBasedpyrightSetPythonPath,
+-- just triggered automatically instead of by hand. basedpyright picks this up live,
+-- no restart needed.
+local function sync_basedpyright_to_molten_kernel()
 	local ok, kernel_ids = pcall(vim.fn.MoltenRunningKernels, { true })
 	if not ok or not kernel_ids or #kernel_ids == 0 then
 		return
@@ -181,55 +235,30 @@ local function sync_ty_to_molten_kernel()
 		return
 	end
 	-- python_path looks like <env>/bin/python3
-	local venv_dir = spec.argv[1]:match("(.+)/bin/[^/]+$")
-	if not venv_dir then
-		return
-	end
+	local python_path = spec.argv[1]
 
-	-- ty falls back to the file's own directory as a single-file root when no
-	-- marker is found upward (e.g. scratch notebooks outside any git repo);
-	-- match that behavior so we write ty.toml where ty will actually look for it.
-	local root = vim.fs.root(0, ty_root_markers) or vim.fs.dirname(vim.api.nvim_buf_get_name(0))
-	if not root then
-		return
+	if vim.b.molten_basedpyright_venv == python_path then
+		return -- this buffer is already synced to this kernel's env
 	end
+	vim.b.molten_basedpyright_venv = python_path
 
-	if vim.b.molten_ty_venv == venv_dir then
-		return -- this buffer's root is already synced to this kernel's env
-	end
-
-	if not write_ty_env_config(root, venv_dir) then
-		vim.notify(
-			"ty.toml already exists at " .. root .. " and isn't molten-managed; skipping kernel sync",
-			vim.log.levels.WARN
-		)
-		return
-	end
-	vim.b.molten_ty_venv = venv_dir
-
-	for _, client in ipairs(vim.lsp.get_clients({ name = "ty" })) do
-		local bufs = vim.tbl_keys(client.attached_buffers)
-		local restart_bufs = vim.tbl_filter(function(buf)
-			local buf_root = vim.fs.root(buf, ty_root_markers) or vim.fs.dirname(vim.api.nvim_buf_get_name(buf))
-			return buf_root == root
-		end, bufs)
-		if #restart_bufs > 0 then
-			client:stop()
-			vim.schedule(function()
-				for _, buf in ipairs(restart_bufs) do
-					if vim.api.nvim_buf_is_valid(buf) then
-						vim.lsp.start(vim.lsp.config.ty, { bufnr = buf })
-					end
-				end
-			end)
+	local bufnr = vim.api.nvim_get_current_buf()
+	for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr, name = "basedpyright" })) do
+		if client.settings then
+			client.settings.python =
+				vim.tbl_deep_extend("force", client.settings.python or {}, { pythonPath = python_path })
+		else
+			client.config.settings =
+				vim.tbl_deep_extend("force", client.config.settings or {}, { python = { pythonPath = python_path } })
 		end
+		client:notify("workspace/didChangeConfiguration", { settings = nil })
 	end
 end
 
 vim.api.nvim_create_autocmd("User", {
 	pattern = "MoltenInitPost",
 	callback = function()
-		vim.schedule(sync_ty_to_molten_kernel)
+		vim.schedule(sync_basedpyright_to_molten_kernel)
 	end,
 })
 

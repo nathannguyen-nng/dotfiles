@@ -1,0 +1,3 @@
+# molten-managed: kernel env synced from MoltenInit
+[environment]
+python = "/opt/homebrew/Caskroom/miniconda/base/envs/ml"

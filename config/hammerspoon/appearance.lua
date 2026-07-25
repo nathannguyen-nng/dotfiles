@@ -72,7 +72,7 @@ end
 local function buildYaziCommand(isDarkMode)
   local theme = isDarkMode and "catppuccin-frappe" or "catppuccin-latte"
   local filePath = os.getenv("HOME") .. "/.config/yazi/theme.toml"
-  return string.format([[sed -i '' 's/use = ".*"/use = "\"%s\""/' %s]], theme, filePath)
+  return string.format([[sed -i '' 's/use = ".*"/use = "%s"/' %s]], theme, filePath)
 end
 
 local function buildTmuxCommand(isDarkMode)

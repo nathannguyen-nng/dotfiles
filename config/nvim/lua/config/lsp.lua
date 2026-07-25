@@ -105,7 +105,7 @@ vim.lsp.enable({
 	"stylua",
 	"taplo",
 	"ruff",
-	"ty",
+	"basedpyright",
 })
 
 -- Load Lsp on-demand, e.g: eslint is disable by default
@@ -116,5 +116,4 @@ end
 
 -- Enable on-type formatting globally for servers that support it
 vim.lsp.on_type_formatting.enable()
-
 

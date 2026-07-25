@@ -173,6 +173,10 @@ export HOMEBREW_DEVELOPER=1
 alias tree='tree -a -I .git'
 alias cat='bat'
 alias cd='z'  # zoxide
+alias c='clear'
+alias cc='claude'
+alias oc='opencode'
+alias cx='codex'
 
 # Directory jump aliases
 alias repo="cd ~/repo/"
@@ -187,6 +191,7 @@ alias config-nvim="nvim -c 'cd ~/.config/nvim/' ~/.config/nvim/"
 alias config-sketchybar="nvim -c 'cd ~/.config/sketchybar/' ~/.config/sketchybar/"
 alias config-borders="nvim -c 'cd ~/.config/borders/' ~/.config/borders/bordersrc"
 alias config-tmux="nvim -c 'cd ~/.config/tmux/' ~/.config/tmux/tmux.conf"
+alias config-herdr="nvim -c 'cd ~/.config/herdr/' ~/.config/herdr/config.toml"
 alias config-hammerspoon="nvim -c 'cd ~/.config/hammerspoon/' ~/.config/hammerspoon/"
 alias config-yazi="nvim -c 'cd ~/.config/yazi/' ~/.config/yazi/"
 alias config-bat="nvim -c 'cd ~/.config/bat/' ~/.config/bat/config"
@@ -380,3 +385,9 @@ rmvenv() {
       rm -r $VENV_HOME/$1
   fi
 }
+
+# Hermes Agent — ensure ~/.local/bin is on PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# Oh-my-pi
+eval "$(omp completions zsh)"

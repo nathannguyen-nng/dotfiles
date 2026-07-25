@@ -117,12 +117,129 @@ map("i", ";", ";<c-g>u")
 
 -- Auto-close pairs (simple, no plugin needed)
 
-map("i", "`", "``<left>")
-map("i", '"', '""<left>')
-map("i", "(", "()<left>")
-map("i", "[", "[]<left>")
-map("i", "{", "{}<left>")
-map("i", "<", "<><left>")
+local pairs_map = {
+	["("] = ")",
+	["["] = "]",
+	["{"] = "}",
+	["`"] = "`",
+	["'"] = "'",
+	['"'] = '"',
+}
+
+local code_ft = {
+	lua = 1,
+	python = 1,
+	javascript = 1,
+	typescript = 1,
+	javascriptreact = 1,
+	typescriptreact = 1,
+	rust = 1,
+	go = 1,
+	c = 1,
+	cpp = 1,
+	java = 1,
+	ruby = 1,
+	sh = 1,
+	bash = 1,
+	zsh = 1,
+	fish = 1,
+	nix = 1,
+	toml = 1,
+	yaml = 1,
+	json = 1,
+}
+
+local function in_code_context()
+	local ft = vim.bo.filetype
+	if ft ~= "markdown" then
+		return code_ft[ft] ~= nil
+	end
+	-- markdown: only pair inside fenced code blocks
+	local ok = pcall(require, "nvim-treesitter.parsers")
+	if not ok then
+		return false
+	end
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local node = vim.treesitter.get_node({ pos = { row - 1, col } })
+	while node do
+		if node:type() == "code_fence_content" then
+			return true
+		end
+		node = node:parent()
+	end
+	return false
+end
+
+local function cursor_in_string()
+	local ok = pcall(require, "nvim-treesitter.parsers")
+	if not ok then
+		return false
+	end
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local node = vim.treesitter.get_node({ pos = { row - 1, col } })
+	if not node then
+		return false
+	end
+	return node:type():find("string") ~= nil or node:type():find("template") ~= nil
+end
+
+for open, close in pairs(pairs_map) do
+	if open ~= close then
+		map("i", open, function()
+			if not in_code_context() then
+				return open
+			end
+			return open .. close .. "<left>"
+		end, { expr = true })
+	end
+
+	map("i", close, function()
+		if not in_code_context() then
+			return close
+		end
+
+		local col = vim.fn.col(".")
+		local line = vim.fn.getline(".")
+		local before = line:sub(col - 1, col - 1)
+		local after = line:sub(col, col)
+
+		if after == close then
+			return "<right>"
+		end
+
+		if open == close then
+			if before:match("%w") or after:match("%w") then
+				return open
+			end
+			if open == "`" and line:sub(col - 2, col - 1) == "``" then
+				return "`"
+			end
+			if cursor_in_string() then
+				return open
+			end
+			return open .. close .. "<left>"
+		end
+
+		return close
+	end, { expr = true })
+end
+
+-- backspace: delete both chars when between a pair
+map("i", "<BS>", function()
+	if not in_code_context() then
+		return "<BS>"
+	end
+	local col = vim.fn.col(".")
+	local line = vim.fn.getline(".")
+	local before = line:sub(col - 1, col - 1)
+	local after = line:sub(col, col)
+	for open, close in pairs(pairs_map) do
+		if before == open and after == close then
+			return "<BS><Del>"
+		end
+	end
+	return "<BS>"
+end, { expr = true })
 
 -- Note: Single quotes commented out to avoid conflicts in some contexts
 -- map("i", "'", "''<left>")
@@ -169,6 +286,26 @@ map("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 -- Inspection tools (useful for debugging highlights and treesitter)
 map("n", "<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
 map("n", "<leader>uI", "<cmd>InspectTree<cr>", { desc = "Inspect Tree" })
+
+-- Diagnose a dead <leader>/which-key: shows every mapping owning it and who set it last,
+-- so a stale buffer-local mapping shadowing the global trigger is obvious at a glance.
+map("n", "<leader>uk", function()
+	local leader = vim.g.mapleader or "\\"
+	local lines = {}
+	for _, mode in ipairs({ "n", "i", "v", "x" }) do
+		local ok, result = pcall(vim.api.nvim_exec2, ("verbose %smap %s"):format(mode, leader), { output = true })
+		table.insert(lines, ("── mode: %s ──"):format(mode))
+		table.insert(lines, ok and result.output or ("(error: " .. tostring(result) .. ")"))
+		table.insert(lines, "")
+	end
+
+	vim.cmd("botright new")
+	vim.bo.buftype = "nofile"
+	vim.bo.bufhidden = "wipe"
+	vim.bo.filetype = "vim"
+	vim.api.nvim_buf_set_name(0, "leader-key-diagnostics")
+	vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(table.concat(lines, "\n"), "\n"))
+end, { desc = "Diagnose Leader Key Mappings" })
 
 -- Keyword program (K for help on word under cursor)
 map("n", "<leader>K", "<cmd>norm! K<cr>", { desc = "Keywordprg" })
@@ -231,7 +368,7 @@ map("n", "<localleader>ip", function()
 	end
 end, { desc = "Initialize Molten for python3", silent = true })
 
-map("n", "<localleader>e", ":MoltenEvaluateOperator<CR>", { desc = "evaluate operator", silent = true })
+map("n", "<localleader>me", ":MoltenEvaluateOperator<CR>", { desc = "evaluate operator", silent = true })
 map("n", "<localleader>os", ":noautocmd MoltenEnterOutput<CR>", { desc = "open output window", silent = true })
 map("n", "<localleader>rr", ":MoltenReevaluateCell<CR>", { desc = "re-eval cell", silent = true })
 map("v", "<localleader>r", ":<C-u>MoltenEvaluateVisual<CR>gv", { desc = "execute visual selection", silent = true })
@@ -239,3 +376,18 @@ map("n", "<localleader>oh", ":MoltenHideOutput<CR>", { desc = "close output wind
 map("n", "<localleader>md", ":MoltenDelete<CR>", { desc = "delete Molten cell", silent = true })
 map("n", "<localleader>mx", ":MoltenOpenInBrowser<CR>", { desc = "open output in browser", silent = true })
 map("n", "<localleader>mi", ":MoltenImagePopup<CR>", { desc = "open image output in Preview", silent = true })
+
+map("n", "<localleader>mc", function()
+	local bufnr = vim.api.nvim_get_current_buf()
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local text = "```python"
+
+	if vim.bo[bufnr].filetype == "quarto" then
+		text = "```{python}"
+	end
+
+	vim.api.nvim_buf_set_lines(0, row, row, false, { text, "", "```" })
+
+	vim.api.nvim_win_set_cursor(0, { row + 2, 0 })
+	vim.cmd("startinsert")
+end, { desc = "insert new code cell", silent = true })
